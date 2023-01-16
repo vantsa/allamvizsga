@@ -1,47 +1,32 @@
 <template>
-<div class="home"> 
-    <div class="background">
-    <div class="comps">
-        <LandPageHeader/>
-        <HelloWorld/>
-    </div>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
+<div class="background">
+    
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
   </div>
-</div>
-  
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-import LandPageHeader from '@/components/LandPageHeader.vue'
-///import Background from '@/components/Background.vue'
-
 export default {
-  name: 'HomeView',
-  components: {
-    HelloWorld,
-    LandPageHeader,
-    ///Background,
-  },
+  name: 'BackGround',
 }
 </script>
 
