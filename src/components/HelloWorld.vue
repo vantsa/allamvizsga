@@ -1,30 +1,41 @@
 <template>
   <div class="content">
     <div class="welcometext">
-    <h1>LeCrevent</h1>
-    <h2>Sportolnál de nincs kivel ?<br> Csatlakozz hozzánk és mi segítünk.</h2>
-    
+     <div>
+        <transition enter-active-class="animated slideInRight">
+            <h1 v-if="showText" class="animated">LeCrevent</h1>
+        </transition>
+    </div>
+    <div>
+        <transition enter-active-class="animated slideInLeft">
+            <h2 v-if="showText2" class="animated">Sportolnál, de nincs kivel?<br> Csatlakozz és legyél te is a csapat tagja!</h2>
+        </transition>
+    </div>
+   
     <div class="gombok">
       <v-layout row>
-        <v-flex xs12 sm6>
-      <v-btn @click="loginDialog = !loginDialog"
+        <v-flex xs12 sm6 class="justify-center align-center">
+          <transition enter-active-class="animated slideInDown">
+            <v-btn @click="loginDialog = !loginDialog"
               elevation="2"
               rounded
-              class="link1"
+              class="link1 animated"
+              v-if="showButton"
           >Bejelentkezés</v-btn>
+          </transition>
         </v-flex>
-        <v-flex xs12 sm6>
+        <v-flex xs12 sm6 class="justify-center align-center">
+          <transition enter-active-class="animated slideInDown">
           <v-btn @click="registerDialog = !registerDialog"
               elevation="2"
               rounded
-              class="link2"
+              class="link2 animated"
+              v-if="showButton"
           >Regisztráció</v-btn>
+          </transition>
         </v-flex>
           </v-layout>
     </div>
-    </div>
-    <div class="mainphotho">
-      <v-img class= "logo" src="../assets/landing.jpg"></v-img>
     </div>
     <v-dialog v-model= "registerDialog"
     max-width="40%">
@@ -39,16 +50,30 @@
 
 <script>
 import userRegister from "../components/userRegister.vue"
+import userLogin from "../components/userLogin.vue"
 
 export default {
-  name: 'HelloWorld',
+  name: 'TesztEst',
   components: {
-    userRegister
+    userRegister,
+    userLogin,
   },
   data: () => ({
     registerDialog: false,
     loginDialog: false,
+    showText: false,
+    showText2: false,
+    showButton: false,
   }),
+  mounted(){
+    this.showText = true,
+    setTimeout(() => {
+          this.showText2 = true
+        }, 1000),
+    setTimeout(() => {
+          this.showButton = true
+        }, 1500);
+  }
 
   
 }
@@ -56,23 +81,26 @@ export default {
 
 <style scoped>
 .welcometext{
+  margin: 0 auto;
+  background: rgba(86,41,144, 0.375);
+  box-shadow: 0 0.75rem 2rem 0 rgb(0 0 0 / 10%);
+  padding: 2rem 6rem 8rem 6rem;
+  border-radius: 2rem;
   margin-top: -6%;
-  width: 100%;
-  margin-right: 10%;
 }
 .gombok{
-  margin-top : 14%;
+  margin: 0 auto;
+  text-align: center;
 }
 .v-btn.link1, .v-btn.link2{
   text-decoration: none;
   padding: 2rem;
   border-radius: 1.1rem;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   
 }
 .v-btn.link1{
-    margin-right: 2rem;
     background-color: white !important;
     color: #3E1E68;
 }
@@ -92,28 +120,52 @@ export default {
   margin: 0 auto;
   width: 82%;
 }
-.content .mainphoto{
-  width : 30%;
-}
-.logo {
-  border-radius: 20% 50% 50% 30% / 30% 30% 70% 70%;
-  margin-top: -5%;
-  width: 37%;
-  opacity: 0.45;
-}
 h1, h2{
   color:white;
   text-align: left;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  margin-left: 4%;
 }
 h1{
-  font-size: 6.625rem;
+  font-size: 9.5rem;
   font-weight: bold;
-  padding-right: 4.5rem;
 }
 h2{
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 100;
+  text-align: center;
+  margin-bottom : 15%;
+}
+.slideInRight {
+        animation: slideInRight 1s ease;
+    }
+    @keyframes slideInRight {
+        0% {
+            transform: translateX(100%);
+        }
+        100% {
+            transform: translateX(0);
+        }
+}
+.slideInLeft {
+        animation: slideInLeft 1s ease;
+    }
+    @keyframes slideInLeft {
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(0);
+        }
+}
+.slideInDown {
+        animation: slideInDown 1s ease;
+}
+@keyframes slideInDown {
+        from {
+            transform: translateY(200%);
+        }
+        to {
+            transform: translateY(0);
+        }
 }
 </style>

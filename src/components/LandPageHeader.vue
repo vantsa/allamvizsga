@@ -1,8 +1,5 @@
 <template>
 <div class="header">
-    <div class="logo">
-            <v-img class= "logo" src="../assets/logo.png"></v-img>
-    </div>
     <div class="social-icons">
             <a href="https://www.instagram.com/vantsaaa/" target="_blank"><v-icon class="pa-2" large>mdi-instagram</v-icon></a>
             <a href="https://www.facebook.com/vantsa.alpar" target="_blank"><v-icon class="pa-2" large>mdi-facebook</v-icon></a>
@@ -23,7 +20,7 @@ export default {
 <style scoped>
 .header{
     display:flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     width: 76%;
     margin: 0 auto;
     padding-top: 10px;
@@ -37,10 +34,5 @@ a{
 }
 .social-icons{
     right: 0;
-}
-.logo{
-    margin-left: 1rem;
-    margin-top: 1rem;
-    width: 35%;
 }
 </style>
