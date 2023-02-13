@@ -35,4 +35,13 @@ a{
 .social-icons{
     right: 0;
 }
+@media screen and (max-width: 600px){
+.header{
+    margin: 0 auto;
+    justify-content: center;
+    width: 100%;
+    margin-bottom : 20%;
+}
+}
+
 </style>

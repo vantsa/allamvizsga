@@ -91,6 +91,7 @@ export default {
 .gombok{
   margin: 0 auto;
   text-align: center;
+  display: flex;
 }
 .v-btn.link1, .v-btn.link2{
   text-decoration: none;
@@ -119,6 +120,7 @@ export default {
   justify-content: space-between;
   margin: 0 auto;
   width: 82%;
+  overflow-wrap: break-word;
 }
 h1, h2{
   color:white;
@@ -167,5 +169,94 @@ h2{
         to {
             transform: translateY(0);
         }
+}
+@media screen and (max-width:1150px) {
+.v-btn.link1, .v-btn.link2{
+  font-size: 1.2rem;
+}
+h1{
+  font-size: 6.5rem;
+  text-align: center;
+}
+.content {
+  margin-top: 15%;
+}
+}
+
+@media screen and (max-width:800px) {
+h1{
+  font-size: 5rem;
+  text-align: center;
+}
+h2{
+  font-size: 1.6rem;
+}
+.v-btn.link1, .v-btn.link2{
+  font-size: 1.1rem;
+  margin-bottom : 5%;
+}
+.gombok{
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+.welcometext{
+  padding: 2rem 4rem 10rem 4rem;
+}
+}
+@media screen and (max-width:700px){
+.row{
+  margin: -35px;
+}
+}
+@media screen and (max-width:575px){
+h1{
+  font-size: 4rem;
+  text-align: center;
+}
+h2{
+  font-size: 1.25rem;
+  margin-top: 10%;
+  margin-bottom: 10%;
+}
+.v-btn.link2{
+  font-size: 1rem;
+  margin-top: 5%;
+}
+.v-btn.link1{
+  font-size: 1rem;
+  margin-top: 10%;
+}
+.welcometext{
+  padding: 2rem 4rem 6rem 4rem;
+}
+}
+@media screen and (max-width:500px) {
+h1{
+  font-size: 3rem;
+  text-align: center;
+}
+h2{
+  font-size: 1rem;
+}
+.welcometext{
+  padding: 2rem 2.5rem 3rem 2.5rem;
+}
+.v-btn.link1{
+  margin-top: 10%;
+}
+.v-btn.link2{
+  margin-top: 5%;
+}
+}
+@media screen and (max-width:320px){
+  .welcometext{
+    padding: 1.5rem 1rem 2rem 1rem;
+}
+.v-btn.link1{
+  margin-top: 25%;
+}
+.v-btn.link2{
+  margin-top: 5%;
+}
 }
 </style>

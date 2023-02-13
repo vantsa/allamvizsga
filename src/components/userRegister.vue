@@ -26,12 +26,12 @@
             :rules="emailRules"
             required
           ></v-text-field>
-          <v-text-field v-model="birthdate" readonly :rules="birthdateRules" label="Születési dátum" @click="bdPicker = true"></v-text-field>
+          <v-text-field v-model="age" readonly :rules="birthdateRules" label="Születési dátum" @click="bdPicker = true"></v-text-field>
             <v-dialog v-model="bdPicker" width="350">
               <v-card>
                 <v-card-text>
                    <v-layout align-center justify-center>
-                  <v-date-picker v-model="birthdate" :rules="birthdateRules" :year-size="2" required min="1905-01-01" max="2022-12-31"  ></v-date-picker>
+                  <v-date-picker v-model="age" :rules="birthdateRules" :year-size="2" required min="1905-01-01" max="2022-12-31"  ></v-date-picker>
                    </v-layout>
                 </v-card-text>
                 <v-card-actions>
@@ -97,6 +97,7 @@ export default {
     username: '',
     password: '',
     confirmPassword: '',
+    age: '',
     showPassword: false,
     showConfirmPassword: false,
     acceptTos: false,
@@ -126,19 +127,39 @@ export default {
     }],
   }),
   methods: {
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
+        
+      try {
         const data = {
         firstName: this.firstName,
         lastName: this.lastName,
-        birthdate: this.birthdate,
+        age: this.calculateAge(this.age),
         username: this.username,
         password: this.password,
         email: this.email
       }
-      axios.post('http://localhost/lecreventApi/register', data)
+        const response = await axios.post('api/users', data,  {
+            headers: {
+            'Content-Type': 'application/json' }
+        });
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
       }
     },
+    calculateAge(date) {
+      let aDate = new Date(date);
+      let today = new Date();
+      let age = today.getFullYear() - aDate.getFullYear();
+      let month = today.getMonth() - aDate.getMonth();
+      if (month < 0 || (month === 0 && today.getDate() < aDate.getDate()))
+      {
+        age--;
+      }
+      return age;
+    }
   }
 }
 </script>
