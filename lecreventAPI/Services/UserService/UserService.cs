@@ -36,6 +36,8 @@ namespace lecreventAPI.Services.UserService
 
         public async Task<List<User>> RegisterUser(User user)
         {
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(user.password);
+            user.password = passwordHash;
             _context.user_profiles.Add(user);
             await _context.SaveChangesAsync();
             return await _context.user_profiles.ToListAsync();

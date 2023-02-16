@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "WwPR9afe44h95wOGQaRGcn2B7Os576lqcSw856LjwzKcHbdnG0AWNreaCZq2ybXpP0bQYmJTm9AepyMtLLN8+g==",
+  "dgSpecHash": "HyAfgiNUTAF9lBfaFRyGxvMx2HPvTrYjolU4ih8dnyy1PWw9utjQBL689u+61LjNewb5BG4e+0w/kkJhtAqoPQ==",
   "success": true,
-  "projectFilePath": "D:\\av\\lecreventAPI\\lecreventAPI.csproj",
+  "projectFilePath": "D:\\av\\lecrevent\\lecreventAPI\\lecreventAPI.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\alpar\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\alpar\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\alpar\\.nuget\\packages\\microsoft.aspnetcore.cors\\2.2.0\\microsoft.aspnetcore.cors.2.2.0.nupkg.sha512",
     "C:\\Users\\alpar\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",
