@@ -2,6 +2,7 @@ using System.Globalization;
 using lecreventAPI.Models;
 using lecreventAPI.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace lecreventAPI.Controllers
 {
@@ -34,7 +35,31 @@ namespace lecreventAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<List<User>>> RegisterUser(User user)
         {
-            var result = await _userService.RegisterUser(user);
+            try
+            {
+                var result = await _userService.RegisterUser(user);
+                if(result is null)
+                {
+                    return BadRequest("Létező felhasználónév vagy email cim!");
+                }
+            return Ok(result);
+            }
+            catch (DbUpdateException){
+                return BadRequest("Létező felhasználónév vagy email cim!");
+            }
+            
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<string>> LoginUser(User user)
+        {
+            var result = await _userService.LoginUser(user);
+            if (result is null)
+            {
+                return BadRequest("Helytelen felhasználónév vagy jelszó");
+            }
+            Console.WriteLine(result);
+            
             return Ok(result);
         }
 

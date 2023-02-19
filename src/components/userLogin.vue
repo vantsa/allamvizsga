@@ -1,4 +1,5 @@
 <template>
+<div>
     <v-card class="hatter">
       <v-card-text>
         <v-form ref="form" v-model="valid" lazy-validation>
@@ -25,13 +26,26 @@
          class="reg"
           text @click="submit" :disabled="!valid">Bejelentkezés</v-btn>
       </v-card-actions>
-      
     </v-card>
-    
+    <v-alert
+        type="error"
+        v-if="errorMsg" dismissible @input="errorMsg = ''"
+        fixed
+        class="alert"
+        >{{ errorMsg }}</v-alert>
+    <v-alert
+        fixed
+        class="alert"
+        type="success"
+        v-if="successMsg" dismissible @input="successMsg = ''"
+        >{{ successMsg }}</v-alert>
+</div>
 
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data: () => ({
     dialog: false,
@@ -39,6 +53,8 @@ export default {
     username: '',
     password: '',
     confirmPassword: '',
+    errorMsg: '',
+    successMsg: '',
     showPassword: false,
     usernameRules: [
       v => !!v || 'Felhaszálónév kötelező'
@@ -48,9 +64,25 @@ export default {
     ]
   }),
   methods: {
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
-        // handle form submission here
+        try {
+        const data = {
+        username: this.username,
+        password: this.password,
+      }
+        // eslint-disable-next-line no-unused-vars
+        const response = await axios.post('api/users/login', data,  {
+            headers: {
+            'Content-Type': 'application/json' }
+        });
+        this.successMsg = "Sikeres bejelentkezés"
+        this.errorMsg = ''
+
+      } catch (error) {
+        this.errorMsg = "Helytelen felhasználónév vagy jelszó";
+        this.successMsg = '';
+      } 
       }
     }
   }
@@ -73,5 +105,13 @@ export default {
 }
 .v-card.hatter{
     background-color: lightgray;
+}
+.alert {
+  position: fixed;
+  top: 5%;
+  left: 80%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: 40%;
 }
 </style>

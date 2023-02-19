@@ -85,3 +85,8 @@ D:\av\lecrevent\lecreventAPI\obj\Debug\net7.0\lecreventAPI.pdb
 D:\av\lecrevent\lecreventAPI\obj\Debug\net7.0\lecreventAPI.genruntimeconfig.cache
 D:\av\lecrevent\lecreventAPI\obj\Debug\net7.0\ref\lecreventAPI.dll
 D:\av\lecrevent\lecreventAPI\bin\Debug\net7.0\BCrypt.Net-Next.dll
+D:\av\lecrevent\lecreventAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+D:\av\lecrevent\lecreventAPI\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\av\lecrevent\lecreventAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+D:\av\lecrevent\lecreventAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+D:\av\lecrevent\lecreventAPI\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll

@@ -9,5 +9,6 @@ namespace lecreventAPI.Services.UserService
         Task<List<User>> RegisterUser(User user);
         Task<List<User>?> UpdateUser(int id, User request);
         Task<List<User>?> DeleteUser(int id);
+        Task<string> LoginUser(User user);
     }
 }

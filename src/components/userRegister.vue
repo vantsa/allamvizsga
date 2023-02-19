@@ -69,14 +69,24 @@
           <v-checkbox size="small" v-model="signupForNewsletter" label="Feliratkozom a hírlevélre"></v-checkbox>
         </v-form>
       </v-card-text>
-      <p class="jobbalso"> Nincs még fiókod ? <a class="blue--text" href="#" @click="dialog = false">Regisztrálj itt !</a></p>
       <v-card-actions class="justify-center" >
         <v-btn rounded 
         color="#3E1E68"
          class="reg"
           text @click="submit" :disabled="!valid">Regisztráció</v-btn>
       </v-card-actions>
-      
+      <v-alert
+        fixed
+        class="alert"
+        type="error"
+        v-if="errorMsg" dismissible @input="errorMsg = ''"
+        >{{ errorMsg }}</v-alert>
+        <v-alert
+        fixed
+        class="alert"
+        type="success"
+        v-if="successMsg" dismissible @input="successMsg = ''"
+        >{{ successMsg }}</v-alert>
     </v-card>
     
 
@@ -98,6 +108,8 @@ export default {
     password: '',
     confirmPassword: '',
     age: '',
+    errorMsg: '',
+    successMsg: '',
     showPassword: false,
     showConfirmPassword: false,
     acceptTos: false,
@@ -139,15 +151,18 @@ export default {
         password: this.password,
         email: this.email
       }
+        // eslint-disable-next-line no-unused-vars
         const response = await axios.post('api/users', data,  {
             headers: {
             'Content-Type': 'application/json' }
         });
-        console.log(response.data);
+        this.successMsg = "Sikeres regisztráció!";
+        this.errorMsg = '';
       } catch (error) {
-        console.error(error);
-      }
-      }
+        this.errorMsg = "Ez az email-cim vagy felhasználó már létezik";
+        this.successMsg = '';
+      }     
+    }
     },
     calculateAge(date) {
       let aDate = new Date(date);
@@ -180,5 +195,13 @@ export default {
 }
 .v-card.hatter{
     background-color: lightgray;
+}
+.alert {
+  position: fixed;
+  top: 5%;
+  left: 80%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: 40%;
 }
 </style>
