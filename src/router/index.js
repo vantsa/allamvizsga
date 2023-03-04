@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import MainView from '../views/MainView.vue'
+import ProfileView from '../views/ProfileView.vue'
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ const routes = [
     path: '/feed',
     name: 'main',
     component: MainView,
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: ProfileView,
   }
 ]
 

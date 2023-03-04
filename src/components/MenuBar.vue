@@ -5,7 +5,7 @@
     <v-spacer></v-spacer>
     <div class="mobile-menu">
     <v-btn text to="/feed">Főoldal</v-btn>
-    <v-btn text to="/profil">Profil</v-btn>
+    <v-btn text to="/profile">Profil</v-btn>
     <v-btn text to="/sajat-esemenyek">Eseményeim</v-btn>
     <v-btn class="logoutbtn" text to="/"><v-icon>mdi-logout</v-icon></v-btn>
     </div>
