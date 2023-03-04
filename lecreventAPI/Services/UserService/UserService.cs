@@ -70,7 +70,7 @@ namespace lecreventAPI.Services.UserService
             return await _context.user_profiles.ToListAsync();
         }
 
-        public async Task<string> LoginUser(User user)
+        public async Task<User> LoginUser(User user)
         {
             var checkUser = await _context.user_profiles.FirstOrDefaultAsync(x => x.username == user.username);
             if (checkUser == null || !BCrypt.Net.BCrypt.Verify(user.password, checkUser.password))
@@ -78,37 +78,7 @@ namespace lecreventAPI.Services.UserService
                 return null;
             }
 
-            var claims = new List<Claim> {
-            new Claim(ClaimTypes.Name, checkUser.username)
-            };
-
-            /*var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("av_lecrevent"));
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds
-            );
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);*/
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("lecrevent_vantsa_allamvizsga2k23");
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim("id", checkUser.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(5),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-             };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-             
-            var jwt = tokenHandler.WriteToken(token);
-            return jwt;
+            return checkUser;
 
         }
     }

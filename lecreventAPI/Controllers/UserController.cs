@@ -1,8 +1,7 @@
-using System.Globalization;
-using lecreventAPI.Models;
-using lecreventAPI.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace lecreventAPI.Controllers
 {
@@ -51,15 +50,35 @@ namespace lecreventAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> LoginUser(User user)
+        public async Task<ActionResult<User>> LoginUser(User user)
         {
             var result = await _userService.LoginUser(user);
+
             if (result is null)
             {
                 return BadRequest("Helytelen felhasználónév vagy jelszó");
             }
-            Console.WriteLine(result);
-            
+            var userJson = JsonSerializer.Serialize(result);
+            HttpContext.Session.SetString("User", userJson);
+
+            Console.WriteLine($"User set to: {userJson}");
+
+            return Ok(result);
+        }
+
+        [HttpGet("welcome")]
+        public async Task<ActionResult> Welcome()
+        {
+            var userJson = HttpContext.Session.GetString("User");
+            Console.WriteLine($"User JSON retrieved: {userJson}");
+
+            if (string.IsNullOrEmpty(userJson))
+            {
+                return BadRequest("Nem vagy bejelentkezve");
+            }
+
+            var result = JsonSerializer.Deserialize<User>(userJson);
+
             return Ok(result);
         }
 

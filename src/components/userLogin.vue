@@ -76,9 +76,14 @@ export default {
             headers: {
             'Content-Type': 'application/json' }
         });
+        // Token eltárolása
+        //localStorage.setItem('token', response.data)
+        //localStorage.setItem('user', JSON.stringify(response.data));
+
         this.successMsg = "Sikeres bejelentkezés"
         this.errorMsg = ''
-
+        //Átirányit a main oldalra
+        this.$router.push({ name: 'main'});
       } catch (error) {
         this.errorMsg = "Helytelen felhasználónév vagy jelszó";
         this.successMsg = '';
