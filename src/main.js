@@ -4,7 +4,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import axios from 'axios'
-
+import VueCookies from 'vue-cookies';
 
 axios.defaults.baseURL = 'http://localhost:5000/'
 const axiosInstance = axios.create({
@@ -28,6 +28,7 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+Vue.use(VueCookies);
 
 
 export default axiosInstance;

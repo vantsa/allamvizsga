@@ -9,6 +9,11 @@ namespace lecreventAPI.Models
         public string username { get; set; } = string.Empty;
         public string password { get; set; } = string.Empty;
         public string email { get; set; } = string.Empty;
+
+        internal static object FindFirstValue(string v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

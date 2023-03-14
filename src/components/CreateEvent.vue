@@ -137,6 +137,8 @@ export default {
 .main {
   width: 35%;
   margin: 0 auto;
+  margin-bottom: 2rem;
+  border-radius: 5px;
 }
 .v-text-field {
   width: 70%;

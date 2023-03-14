@@ -31,13 +31,25 @@ builder.Services.AddDbContext<DataContext>(options => options.UseMySql(connectio
 
 
 
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
+// builder.Services.AddDistributedMemoryCache();
+// builder.Services.AddSession(options =>
+// {
+//     options.Cookie.Name = ".Lecrevent.Session";
+//     options.Cookie.IsEssential = true;
+//     options.Cookie.HttpOnly = true;
+//     options.IdleTimeout = TimeSpan.FromMinutes(30);
+// });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
 {
-    options.Cookie.Name = ".Lecrevent.Session";
-    options.Cookie.IsEssential = true;
-    options.Cookie.HttpOnly = true;
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+options.TokenValidationParameters = new TokenValidationParameters
+{
+ValidateIssuerSigningKey = true,
+IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("lecrevent_vantsa_allamvizsga2k23")),
+ValidateIssuer = false,
+ValidateAudience = false
+};
 });
 
 var app = builder.Build();
@@ -56,7 +68,6 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 Console.WriteLine("valami");
-app.UseSession();
 
 app.MapControllers();
 

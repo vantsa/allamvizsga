@@ -7,6 +7,6 @@
     "\\Services",
     "\\Services\\UserService"
   ],
-  "SelectedNode": "\\Program.cs",
+  "SelectedNode": "\\Controllers\\UserController.cs",
   "PreviewInSolutionExplorer": false
 }

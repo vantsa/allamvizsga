@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
-using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace lecreventAPI.Controllers
 {
@@ -37,20 +37,21 @@ namespace lecreventAPI.Controllers
             try
             {
                 var result = await _userService.RegisterUser(user);
-                if(result is null)
+                if (result is null)
                 {
                     return BadRequest("Létező felhasználónév vagy email cim!");
                 }
-            return Ok(result);
+                return Ok(result);
             }
-            catch (DbUpdateException){
+            catch (DbUpdateException)
+            {
                 return BadRequest("Létező felhasználónév vagy email cim!");
             }
-            
+
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<User>> LoginUser(User user)
+        public async Task<ActionResult<string>> LoginUser(User user)
         {
             var result = await _userService.LoginUser(user);
 
@@ -58,28 +59,30 @@ namespace lecreventAPI.Controllers
             {
                 return BadRequest("Helytelen felhasználónév vagy jelszó");
             }
-            var userJson = JsonSerializer.Serialize(result);
-            HttpContext.Session.SetString("User", userJson);
 
-            Console.WriteLine($"User set to: {userJson}");
+            Response.Cookies.Append("token", result, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(5)
+            });
 
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet("welcome")]
-        public async Task<ActionResult> Welcome()
+        [Authorize]
+        public async Task<ActionResult<User>> Welcome()
         {
-            var userJson = HttpContext.Session.GetString("User");
-            Console.WriteLine($"User JSON retrieved: {userJson}");
+            var userId = int.Parse(User.FindFirstValue("id"));
 
-            if (string.IsNullOrEmpty(userJson))
-            {
-                return BadRequest("Nem vagy bejelentkezve");
-            }
+            var userProfile = await _userService.Welcome(userId);
 
-            var result = JsonSerializer.Deserialize<User>(userJson);
+            return Ok(userProfile);
 
-            return Ok(result);
+
         }
 
         [HttpPut("{id}")]

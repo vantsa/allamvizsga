@@ -38,6 +38,12 @@ namespace lecreventAPI.Services.UserService
             return user;
         }
 
+        public async Task<User?> Welcome(int userId)
+        {
+           var userProfile = await _context.user_profiles.FindAsync(userId);
+           return userProfile;
+        }
+
         public async Task<List<User>> RegisterUser(User user)
         {
             var existingUser = await _context.user_profiles.FirstOrDefaultAsync(x => x.username == user.username || x.email == user.email);
@@ -70,7 +76,7 @@ namespace lecreventAPI.Services.UserService
             return await _context.user_profiles.ToListAsync();
         }
 
-        public async Task<User> LoginUser(User user)
+        public async Task<string> LoginUser(User user)
         {
             var checkUser = await _context.user_profiles.FirstOrDefaultAsync(x => x.username == user.username);
             if (checkUser == null || !BCrypt.Net.BCrypt.Verify(user.password, checkUser.password))
@@ -78,7 +84,29 @@ namespace lecreventAPI.Services.UserService
                 return null;
             }
 
-            return checkUser;
+            var claims = new List<Claim> {
+            new Claim(ClaimTypes.Name, checkUser.username)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes("lecrevent_vantsa_allamvizsga2k23");
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim("id", checkUser.Id.ToString()),
+                    new Claim("firstName", checkUser.firstName.ToString()),
+                    new Claim("lastName", checkUser.lastName.ToString()),
+                    new Claim("username", checkUser.username.ToString()),
+                    new Claim("email", checkUser.email.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(5),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+             };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            var jwt = tokenHandler.WriteToken(token);
+            return jwt;
 
         }
     }
