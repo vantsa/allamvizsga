@@ -6,11 +6,11 @@
       <div class="mobile-menu">
         <v-btn text to="/feed">Főoldal</v-btn>
         <v-btn text to="/profile">Profil</v-btn>
-        <v-btn text to="/sajat-esemenyek">Eseményeim</v-btn>
+        <v-btn text to="/myevents">Eseményeim</v-btn>
         <v-avatar color="yellow" size="44">
           <span class="text-h5"> {{ initials }} </span>
         </v-avatar>
-        <v-btn class="logoutbtn" text to="/"><v-icon>mdi-logout</v-icon></v-btn>
+        <v-btn class="logoutbtn" @click="logOut"><v-icon>mdi-logout</v-icon></v-btn>
       </div>
     </v-app-bar>
   </v-container>
@@ -25,6 +25,12 @@ export default {
     return {
       initials: "",
     };
+  },
+  methods: {
+    logOut() {
+      localStorage.removeItem("jwtToken");
+      this.$router.push('/');
+    }
   },
   mounted() {
     const token = localStorage.getItem("jwtToken");

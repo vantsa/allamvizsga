@@ -3,8 +3,6 @@
     <h1> {{ welcomeMessage }}</h1>
     <MenuBar />
     <CreateEvent />
-    <CreateEvent />
-    <CreateEvent />
     <FooterBar />
   </div>
 </template>

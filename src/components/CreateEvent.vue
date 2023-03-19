@@ -49,6 +49,10 @@
         :rules="locationRules"
         required
       ></v-text-field>
+      <l-map style="height: 300px" :zoom="zoom" :center="center">
+        <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+        <l-marker :lat-lng="markerLatLng"></l-marker>
+      </l-map>
       <v-card-actions class="justify-end">
         <v-btn
           rounded
@@ -74,9 +78,17 @@
 
 <script>
 import axios from "axios";
+import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
+import "leaflet/dist/leaflet.css";
+import { Icon } from "leaflet";
 
 export default {
   name: "CreateEvent",
+  components: {
+    LMap,
+    LTileLayer,
+    LMarker,
+  },
   data: () => ({
     valid: true,
     topic: "",
@@ -108,6 +120,10 @@ export default {
       (v) =>
         /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/.test(v) || "Helytelen formátum",
     ],
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    zoom: 17,
+    center: [46.36, 25.802],
+    markerLatLng: [46.3604, 25.802],
   }),
   methods: {
     async submit() {
@@ -130,6 +146,14 @@ export default {
       }
     },
   },
+  mounted() {
+    delete Icon.Default.prototype._getIconUrl;
+    Icon.Default.mergeOptions({
+      iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
+      iconUrl: require("leaflet/dist/images/marker-icon.png"),
+      shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+    });
+  },
 };
 </script>
 
@@ -144,8 +168,8 @@ export default {
   width: 70%;
   padding-left: 1.5rem;
 }
-h1{
-    padding: 1.5rem 0 0 1.5rem;
+h1 {
+  padding: 1.5rem 0 0 1.5rem;
 }
 .elso {
   padding-top: 1.5rem;
@@ -162,5 +186,9 @@ h1{
   background-color: #3e1e68;
   color: white;
   margin: 0 1.5rem 1.5rem 0;
+}
+.l-map{
+  width: 500px;
+  height: 300px;
 }
 </style>

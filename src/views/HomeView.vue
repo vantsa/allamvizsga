@@ -42,6 +42,12 @@ export default {
     LandPageHeader,
     ///Background,
   },
+  mounted(){
+    if(localStorage.getItem("jwtToken"))
+    {
+        this.$router.push('/feed')
+    }
+  }
 }
 </script>
 

@@ -40,10 +40,17 @@ namespace lecreventAPI.Services.UserService
 
         public async Task<User?> Welcome(int userId)
         {
-           var userProfile = await _context.user_profiles.FindAsync(userId);
-           return userProfile;
+            var userProfile = await _context.user_profiles.FindAsync(userId);
+            return userProfile;
         }
 
+        public async Task<UserSettings?> GetUserSettings(int userId)
+        {
+            var userSettings = await _context.user_settings.SingleOrDefaultAsync(us => us.userId == userId);
+            if (userSettings == null)
+                return null;
+            return userSettings;
+        }
         public async Task<List<User>> RegisterUser(User user)
         {
             var existingUser = await _context.user_profiles.FirstOrDefaultAsync(x => x.username == user.username || x.email == user.email);
@@ -54,6 +61,7 @@ namespace lecreventAPI.Services.UserService
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(user.password);
             user.password = passwordHash;
             _context.user_profiles.Add(user);
+
             await _context.SaveChangesAsync();
             return await _context.user_profiles.ToListAsync();
         }
@@ -74,6 +82,22 @@ namespace lecreventAPI.Services.UserService
             await _context.SaveChangesAsync();
 
             return await _context.user_profiles.ToListAsync();
+        }
+
+        public async Task<List<UserSettings>?> UpdateSettings(int userId, UserSettings request)
+        {
+            var userSettings = await _context.user_settings.SingleOrDefaultAsync(us => us.userId == userId);
+            if (userSettings == null)
+            {
+                return null;
+            }
+            userSettings.value = request.value;
+            userSettings.rangeStart = request.rangeStart;
+            userSettings.rangeEnd = request.rangeEnd;
+
+            await _context.SaveChangesAsync();
+
+            return await _context.user_settings.ToListAsync();
         }
 
         public async Task<string> LoginUser(User user)
@@ -102,7 +126,7 @@ namespace lecreventAPI.Services.UserService
                 }),
                 Expires = DateTime.UtcNow.AddDays(5),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-             };
+            };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             var jwt = tokenHandler.WriteToken(token);

@@ -4,11 +4,11 @@
     <v-spacer />
     <v-card>
       <h1>Profil szerkesztése</h1>
-      <v-avatar size="150">
-        <v-img src="../assets/profil.jpg"></v-img>
+      <v-avatar color="yellow" size="150">
+        <span class="avatarcontent"> {{ initials }} </span>
       </v-avatar>
-      <h3> {{ username }}</h3>
-      <h3 class="utolso"> {{ email }} </h3>
+      <h3>{{ username }}</h3>
+      <h3 class="utolso">{{ email }}</h3>
       <div class="content">
         <span class="left">Maximális távolság</span>
         <span class="right">{{ value }} km</span>
@@ -34,8 +34,19 @@
         <span class="number">7</span>
       </div>
       <v-card-actions class="justify-end">
-        <v-btn rounded class="create-btn" text large>Mentés </v-btn>
+        <v-btn rounded class="create-btn" text large @click="submit">
+          Mentés
+        </v-btn>
       </v-card-actions>
+      <v-alert
+        fixed
+        class="alert"
+        type="success"
+        v-if="successMsg"
+        dismissible
+        @input="successMsg = ''"
+        >{{ successMsg }}</v-alert
+      >
     </v-card>
     <FooterBar />
   </div>
@@ -44,7 +55,8 @@
 <script>
 import MenuBar from "../components/MenuBar.vue";
 import FooterBar from "../components/FooterBar.vue";
-import jwt_decode from "jwt-decode"
+import jwt_decode from "jwt-decode";
+import axios from "axios";
 
 export default {
   name: "ProfileView",
@@ -54,27 +66,75 @@ export default {
   },
   data() {
     return {
-      value: 25,
-      range: [16, 30],
-      username: '',
-      email: '',
+      value: null,
+      range: [0,0],
+      username: "",
+      email: "",
+      initials: "",
+      successMsg: "",
+      userId: "",
+      rangeStart: 0,
+      rangeEnd: 0,
+      user: {}
     };
+  },
+  methods: {
+    async submit() {
+      try {
+        const userResponse = await axios.get(`api/users/${this.userId}`);
+        const user = userResponse.data;
+        const data = {
+          value: this.value,
+          rangeStart: this.range[0],
+          rangeEnd: this.range[1],
+          user: user,
+        };
+        // eslint-disable-next-line no-unused-vars
+        const response = await axios.put(
+          `api/users/savesettings/${this.userId}`,
+          data,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        this.successMsg = "Beállitások mentve!";
+      } catch (error) {
+        this.successMsg = "";
+      }
+    },
   },
   computed: {
     format() {
       return this.range[0] + " - " + this.range[1];
     },
   },
-  mounted() {
+  created() {
     const token = localStorage.getItem("jwtToken");
-    if(!token){
+    if (!token) {
       console.error("No token found");
       return;
     }
     const user = jwt_decode(token);
+    this.initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
     this.username = user.username;
     this.email = user.email;
-  }
+    this.userId = user.id;
+    console.log(this.userId);
+  },
+  async mounted() {
+    try {
+      const response = await axios.get(`api/users/userprofile/${this.userId}`);
+      this.value = response.data.value;
+      this.rangeStart = response.data.rangeStart;
+      this.rangeEnd = response.data.rangeEnd;
+      this.range = [this.rangeStart, this.rangeEnd];
+      this.user = response.data.user;
+    } catch (error) {
+      console.error(error);
+    }
+  },
 };
 </script>
 
@@ -142,5 +202,20 @@ span {
   color: white;
   margin: 0 4rem 1.5rem 0;
   font-size: 1rem;
+}
+.avatarcontent {
+  font-size: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.75rem;
+}
+.alert {
+  position: fixed;
+  top: 5%;
+  left: 80%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: 40%;
 }
 </style>

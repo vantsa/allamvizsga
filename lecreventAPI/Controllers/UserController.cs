@@ -31,6 +31,15 @@ namespace lecreventAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("userprofile/{userId}")]
+        public async Task<ActionResult<UserSettings>> GetUserSettings(int userId)
+        {
+            var result = await _userService.GetUserSettings(userId);
+            if (result is null)
+                return NotFound("Nem letezo felhasznalo");
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<ActionResult<List<User>>> RegisterUser(User user)
         {
@@ -47,7 +56,6 @@ namespace lecreventAPI.Controllers
             {
                 return BadRequest("Létező felhasználónév vagy email cim!");
             }
-
         }
 
         [HttpPost("login")]
@@ -86,9 +94,18 @@ namespace lecreventAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<List<User>>> UpdateUser(int id, User request)
+        public async Task<ActionResult<List<User>>> UpdateUser(int userId, User request)
         {
-            var result = await _userService.UpdateUser(id, request);
+            var result = await _userService.UpdateUser(userId, request);
+            if (result is null)
+                return NotFound("Nem letezo felhasznalo");
+            return Ok(result);
+        }
+
+        [HttpPut("savesettings/{userId}")]
+        public async Task<ActionResult<List<UserSettings>>> UpdateSettings(int userId, UserSettings request)
+        {
+            var result = await _userService.UpdateSettings(userId, request);
             if (result is null)
                 return NotFound("Nem letezo felhasznalo");
             return Ok(result);

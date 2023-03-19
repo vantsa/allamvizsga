@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql;
 
 
 namespace lecreventAPI.Data
@@ -14,9 +13,17 @@ namespace lecreventAPI.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            ///optionsBuilder.UseMySql("server=localhost;user=root;database=lecrevent;password=;port=3306");
         }
 
         public DbSet<User> user_profiles { get; set; }
+        public DbSet<UserSettings> user_settings {get; set;}
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.UserSettings)
+                .WithOne(up => up.User)
+                .HasForeignKey(up => up.userId);
+        }
     }
 }
