@@ -1,16 +1,32 @@
 <template>
   <v-container fluid>
     <v-app-bar app color="#3E1E68" dark>
-      <h1>LeCrevent</h1>
+      <v-img src="../assets/logo3.png" max-width="10%" v-on:click="goTo('/feed')"></v-img>
       <v-spacer></v-spacer>
       <div class="mobile-menu">
         <v-btn text to="/feed">Főoldal</v-btn>
-        <v-btn text to="/profile">Profil</v-btn>
         <v-btn text to="/myevents">Eseményeim</v-btn>
-        <v-avatar color="yellow" size="44">
-          <span class="text-h5"> {{ initials }} </span>
-        </v-avatar>
-        <v-btn class="logoutbtn" @click="logOut"><v-icon>mdi-logout</v-icon></v-btn>
+        <v-menu offset-y>
+          <template v-slot:activator="{ on }">
+            <v-avatar color="yellow" size="44" v-on="on">
+              <span class="text-h5">{{ initials }}</span>
+            </v-avatar>
+          </template>
+        <v-list>
+          <v-list-item v-on:click="goTo('/profile')">
+          <v-list-item-icon>
+              <v-icon>mdi-account-circle</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Profil</v-list-item-title>
+          </v-list-item>
+          <v-list-item v-on:click="logOut">
+            <v-list-item-icon>
+              <v-icon>mdi-logout</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Kijelentkezés</v-list-item-title>
+          </v-list-item>
+        </v-list>
+        </v-menu>
       </div>
     </v-app-bar>
   </v-container>
@@ -24,13 +40,17 @@ export default {
   data() {
     return {
       initials: "",
+      username: "",
     };
   },
   methods: {
     logOut() {
       localStorage.removeItem("jwtToken");
-      this.$router.push('/');
-    }
+      this.$router.push("/");
+    },
+    goTo(url) {
+      this.$router.push(url);
+    },
   },
   mounted() {
     const token = localStorage.getItem("jwtToken");
@@ -40,6 +60,7 @@ export default {
     }
     const user = jwt_decode(token);
     this.initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
+    this.username = user.username;
   },
 };
 </script>
@@ -47,9 +68,6 @@ export default {
 <style scoped>
 .mobile-menu {
   margin: 0 2.5rem;
-}
-h1 {
-  margin: 0 5rem;
 }
 .v-btn {
   background-color: #3e1e68;
@@ -68,5 +86,15 @@ span {
   color: purple;
   padding: 5px;
   font-weight: bold;
+}
+.theme--light.v-list {
+  background-color: #3e1e68;
+}
+.v-list-item .v-list-item__title
+{
+  color: white;
+}
+.theme--light.v-icon  {
+  color: white;
 }
 </style>

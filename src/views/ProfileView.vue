@@ -32,6 +32,8 @@
         ></v-range-slider>
         <span class="center">Általad létrehozott események</span>
         <span class="number">7</span>
+        <span class="center">Ennyi eseményen vettél részt</span>
+        <span class="number">12</span>
       </div>
       <v-card-actions class="justify-end">
         <v-btn rounded class="create-btn" text large @click="submit">

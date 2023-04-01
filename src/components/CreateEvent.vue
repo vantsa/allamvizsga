@@ -8,21 +8,29 @@
         label="Esemény típusa"
         :rules="topicRules"
         required
+        style="color: white"
       ></v-text-field>
       <v-text-field
-        v-model="time"
-        readonly
-        :rules="timeRules"
-        label="Esemény időpontja"
-        @click="timePicker = true"
+        v-model="spaces"
+        label="Szabad helyek száma"
+        :rules="spaceRules"
+        required
+        style="color: white"
       ></v-text-field>
-      <v-dialog v-model="timePicker" width="350">
-        <v-card>
+      <v-text-field
+        v-model="date"
+        readonly
+        :rules="dateRules"
+        label="Esemény időpontja"
+        @click="datePicker = true"
+      ></v-text-field>
+      <v-dialog v-model="datePicker" width="350">
+        <v-card class="timeDialog">
           <v-card-text>
             <v-layout align-center justify-center>
               <v-date-picker
-                v-model="time"
-                :rules="timeRules"
+                v-model="date"
+                :rules="dateRules"
                 :year-size="2"
                 required
               ></v-date-picker>
@@ -30,29 +38,42 @@
           </v-card-text>
           <v-card-actions>
             <v-layout align-center justify-center>
-              <v-btn color="primary" @click="timePicker = false">Mentés</v-btn>
+              <v-btn color="primary" @click="datePicker = false">Mentés</v-btn>
             </v-layout>
           </v-card-actions>
         </v-card>
       </v-dialog>
       <v-text-field
-        v-model="ptime"
+        v-model="time"
         label="Pontos időpont"
         hint="Használd ezt a formátumot HH:mm"
-        :rules="ptimeRules"
+        :rules="timeRules"
         v-mask="'##:##'"
       ></v-text-field>
-      <v-text-field
-        v-model="location"
-        label="Helyszín"
-        hint="írd be a címet, vagy a térképen jelöld be"
-        :rules="locationRules"
-        required
-      ></v-text-field>
-      <l-map style="height: 300px" :zoom="zoom" :center="center">
-        <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-        <l-marker :lat-lng="markerLatLng"></l-marker>
-      </l-map>
+      <div class="leaflet">
+        <l-map
+          ref="map"
+          :zoom="zoom"
+          :center="center"
+          @click="onMapClick"
+          style="z-index: 0; height: 300px"
+        >
+          <l-tile-layer :url="url"></l-tile-layer>
+          <l-marker :lat-lng="markerLatLng"></l-marker>
+        </l-map>
+      </div>
+      <vue-google-autocomplete
+          ref="locationAutocomplete"
+          id="location-autocomplete"
+          class="form-control"
+          placeholder="Start typing address"
+          @place_changed="onPlaceChanged"
+          :options="{
+            types: ['geocode'],
+            componentRestrictions: { country: 'ro' },
+            key: 'AIzaSyBtFkammvlxbrJunQW5XcXXTrnHfgWj77E'
+          }"
+        ></vue-google-autocomplete>
       <v-card-actions class="justify-end">
         <v-btn
           rounded
@@ -81,6 +102,7 @@ import axios from "axios";
 import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
+import VueGoogleAutocomplete from "vue-google-autocomplete";
 
 export default {
   name: "CreateEvent",
@@ -88,17 +110,18 @@ export default {
     LMap,
     LTileLayer,
     LMarker,
+    VueGoogleAutocomplete,
   },
   data: () => ({
     valid: true,
     topic: "",
-    location: "",
-    ptime: "",
+    spaces: "",
+    time: "",
     successMsg: "",
     dialog: false,
-    timePicker: false,
-    time: "",
-    timeRules: [
+    datePicker: false,
+    date: "",
+    dateRules: [
       (v) => !!v || "Dátum kötelező",
       (v) => {
         const selectedDate = new Date(v);
@@ -114,9 +137,17 @@ export default {
       (v) =>
         (v && v.length >= 4) || "A leírás legalább 4 karakter kell legyen!",
     ],
-    locationRules: [(v) => !!v || "Helyszín megadása kötelező"],
-    ptimeRules: [
-      (v) => !!v || "Time is required",
+    spaceRules: [
+      (v) => !!v || "Elérhető helyek meghatározása kötelező",
+      (v) => {
+        if (v <= 0)
+        {
+          return "Nem megfelelő érték"
+        }
+      }
+    ],
+    timeRules: [
+      (v) => !!v || "Pontos idő megadása kötelező",
       (v) =>
         /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/.test(v) || "Helytelen formátum",
     ],
@@ -124,6 +155,9 @@ export default {
     zoom: 17,
     center: [46.36, 25.802],
     markerLatLng: [46.3604, 25.802],
+    mapVisible: true,
+    latitude: '',
+    longitude: '',
   }),
   methods: {
     async submit() {
@@ -131,10 +165,14 @@ export default {
         try {
           const data = {
             topic: this.topic,
-            location: this.location,
+            spaces: this.spaces,
+            date: this.date,
+            time: this.time,
+            latitude: this.latitude,
+            longitude: this.longitude,
           };
           // eslint-disable-next-line no-unused-vars
-          const response = await axios.post("api/users", data, {
+          const response = await axios.post("api/events", data, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -143,6 +181,21 @@ export default {
         } catch (error) {
           this.successMsg = "";
         }
+      }
+    },
+    onMapClick(e) {
+      this.markerLatLng = [e.latlng.lat, e.latlng.lng];
+      this.latitude = e.latlng.lat
+      this.longitude = e.latlng.lng
+      console.log(this.latitude, this.longitude)
+    },
+    onPlaceChanged() {
+      const place = this.$refs.locationAutocomplete.getPlace();
+      if (place.geometry) {
+        this.markerLatLng = [
+          place.geometry.location.lat(),
+          place.geometry.location.lng(),
+        ];
       }
     },
   },
@@ -163,16 +216,18 @@ export default {
   margin: 0 auto;
   margin-bottom: 2rem;
   border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.35);
 }
 .v-text-field {
-  width: 70%;
-  padding-left: 1.5rem;
+  margin: 0 auto;
+  margin-top: 0.7rem;
+  width: 95%;
+  padding: 0rem 1.5rem 0rem 1.5rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 35px;
 }
 h1 {
   padding: 1.5rem 0 0 1.5rem;
-}
-.elso {
-  padding-top: 1.5rem;
 }
 .alert {
   position: fixed;
@@ -187,8 +242,10 @@ h1 {
   color: white;
   margin: 0 1.5rem 1.5rem 0;
 }
-.l-map{
-  width: 500px;
-  height: 300px;
+.leaflet {
+  margin: 1.5rem 1rem;
+}
+.timeDialog {
+  z-index: 200099;
 }
 </style>

@@ -10,6 +10,7 @@ namespace lecreventAPI.Models
         public string password { get; set; } = string.Empty;
         public string email { get; set; } = string.Empty;
         public ICollection<UserSettings>? UserSettings { get; set; }
+        public ICollection<Event>? Events { get; set; }
     }
 }
 
