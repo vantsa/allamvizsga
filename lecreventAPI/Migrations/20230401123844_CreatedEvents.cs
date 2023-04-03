@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace lecreventAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class AddEventTable : Migration
+    public partial class CreatedEvents : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Event",
+                name: "event_details",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -30,9 +30,9 @@ namespace lecreventAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Event", x => x.Id);
+                    table.PrimaryKey("PK_event_details", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Event_user_profiles_userId",
+                        name: "FK_event_details_user_profiles_userId",
                         column: x => x.userId,
                         principalTable: "user_profiles",
                         principalColumn: "Id",
@@ -41,8 +41,8 @@ namespace lecreventAPI.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Event_userId",
-                table: "Event",
+                name: "IX_event_details_userId",
+                table: "event_details",
                 column: "userId");
         }
 
@@ -50,7 +50,7 @@ namespace lecreventAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Event");
+                name: "event_details");
         }
     }
 }

@@ -52,7 +52,7 @@ namespace lecreventAPI.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("Event");
+                    b.ToTable("event_details");
                 });
 
             modelBuilder.Entity("lecreventAPI.Models.User", b =>

@@ -7,6 +7,6 @@
     "\\Services",
     "\\Services\\UserService"
   ],
-  "SelectedNode": "\\Program.cs",
+  "SelectedNode": "\\Services\\UserService\\EventService.cs",
   "PreviewInSolutionExplorer": false
 }

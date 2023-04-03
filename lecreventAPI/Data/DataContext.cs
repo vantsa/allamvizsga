@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace lecreventAPI.Data
 {
@@ -16,7 +16,8 @@ namespace lecreventAPI.Data
         }
 
         public DbSet<User> user_profiles { get; set; }
-        public DbSet<UserSettings> user_settings {get; set;}
+        public DbSet<UserSettings> user_settings { get; set; }
+        public DbSet<Event> event_details { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,6 +25,15 @@ namespace lecreventAPI.Data
                 .HasMany(u => u.UserSettings)
                 .WithOne(up => up.User)
                 .HasForeignKey(up => up.userId);
+
+            modelBuilder.Entity<Event>()
+                            .HasKey(e => e.Id);
+
+            modelBuilder.Entity<Event>()
+                .HasOne(e => e.User)
+                .WithMany(u => u.Events)
+                .HasForeignKey(e => e.userId);
         }
     }
+
 }

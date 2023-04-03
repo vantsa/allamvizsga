@@ -4,9 +4,9 @@
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-text-field
         class="elso"
-        v-model="topic"
+        v-model="description"
         label="Esemény típusa"
-        :rules="topicRules"
+        :rules="descriptionRules"
         required
         style="color: white"
       ></v-text-field>
@@ -63,17 +63,17 @@
         </l-map>
       </div>
       <vue-google-autocomplete
-          ref="locationAutocomplete"
-          id="location-autocomplete"
-          class="form-control"
-          placeholder="Start typing address"
-          @place_changed="onPlaceChanged"
-          :options="{
-            types: ['geocode'],
-            componentRestrictions: { country: 'ro' },
-            key: 'AIzaSyBtFkammvlxbrJunQW5XcXXTrnHfgWj77E'
-          }"
-        ></vue-google-autocomplete>
+        ref="locationAutocomplete"
+        id="location-autocomplete"
+        class="form-control"
+        placeholder="Start typing address"
+        @place_changed="onPlaceChanged"
+        :options="{
+          types: ['geocode'],
+          componentRestrictions: { country: 'ro' },
+          key: 'AIzaSyBtFkammvlxbrJunQW5XcXXTrnHfgWj77E',
+        }"
+      ></vue-google-autocomplete>
       <v-card-actions class="justify-end">
         <v-btn
           rounded
@@ -103,9 +103,14 @@ import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
 import VueGoogleAutocomplete from "vue-google-autocomplete";
+import jwt_decode from "jwt-decode";
+import VueTheMask from 'vue-the-mask';
 
 export default {
   name: "CreateEvent",
+  directives: {
+    mask: VueTheMask.directive,
+  },
   components: {
     LMap,
     LTileLayer,
@@ -114,7 +119,7 @@ export default {
   },
   data: () => ({
     valid: true,
-    topic: "",
+    description: "",
     spaces: "",
     time: "",
     successMsg: "",
@@ -132,19 +137,14 @@ export default {
         return true;
       },
     ],
-    topicRules: [
+    descriptionRules: [
       (v) => !!v || "Leírás kötelező",
       (v) =>
         (v && v.length >= 4) || "A leírás legalább 4 karakter kell legyen!",
     ],
     spaceRules: [
       (v) => !!v || "Elérhető helyek meghatározása kötelező",
-      (v) => {
-        if (v <= 0)
-        {
-          return "Nem megfelelő érték"
-        }
-      }
+      (v) => (v && v >= 0) || "Negativ mennyiség nem lehetséges",
     ],
     timeRules: [
       (v) => !!v || "Pontos idő megadása kötelező",
@@ -156,23 +156,27 @@ export default {
     center: [46.36, 25.802],
     markerLatLng: [46.3604, 25.802],
     mapVisible: true,
-    latitude: '',
-    longitude: '',
+    latitude: "",
+    longitude: "",
   }),
   methods: {
     async submit() {
       if (this.$refs.form.validate()) {
         try {
+          const userResponse = await axios.get(`api/users/${this.userId}`);
+          const user = userResponse.data;
           const data = {
-            topic: this.topic,
+            description: this.description,
             spaces: this.spaces,
             date: this.date,
             time: this.time,
             latitude: this.latitude,
             longitude: this.longitude,
+            user: user,
           };
+          console.log(data)
           // eslint-disable-next-line no-unused-vars
-          const response = await axios.post("api/events", data, {
+          const response = await axios.post(`api/events/${this.userId}`, data, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -185,9 +189,9 @@ export default {
     },
     onMapClick(e) {
       this.markerLatLng = [e.latlng.lat, e.latlng.lng];
-      this.latitude = e.latlng.lat
-      this.longitude = e.latlng.lng
-      console.log(this.latitude, this.longitude)
+      this.latitude = e.latlng.lat;
+      this.longitude = e.latlng.lng;
+      console.log(this.latitude, this.longitude);
     },
     onPlaceChanged() {
       const place = this.$refs.locationAutocomplete.getPlace();
@@ -206,6 +210,17 @@ export default {
       iconUrl: require("leaflet/dist/images/marker-icon.png"),
       shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
     });
+    const token = localStorage.getItem("jwtToken");
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
+    const user = jwt_decode(token);
+    this.initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
+    this.username = user.username;
+    this.email = user.email;
+    this.userId = user.id;
+    console.log(this.userId);
   },
 };
 </script>

@@ -5,7 +5,7 @@
       <v-spacer></v-spacer>
       <div class="mobile-menu">
         <v-btn text to="/feed">Főoldal</v-btn>
-        <v-btn text to="/myevents">Eseményeim</v-btn>
+        <v-btn text to="/events">Eseményeim</v-btn>
         <v-menu offset-y>
           <template v-slot:activator="{ on }">
             <v-avatar color="yellow" size="44" v-on="on">
