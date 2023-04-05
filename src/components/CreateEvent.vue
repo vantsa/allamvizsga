@@ -62,18 +62,6 @@
           <l-marker :lat-lng="markerLatLng"></l-marker>
         </l-map>
       </div>
-      <vue-google-autocomplete
-        ref="locationAutocomplete"
-        id="location-autocomplete"
-        class="form-control"
-        placeholder="Start typing address"
-        @place_changed="onPlaceChanged"
-        :options="{
-          types: ['geocode'],
-          componentRestrictions: { country: 'ro' },
-          key: 'AIzaSyBtFkammvlxbrJunQW5XcXXTrnHfgWj77E',
-        }"
-      ></vue-google-autocomplete>
       <v-card-actions class="justify-end">
         <v-btn
           rounded
@@ -102,7 +90,6 @@ import axios from "axios";
 import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
-import VueGoogleAutocomplete from "vue-google-autocomplete";
 import jwt_decode from "jwt-decode";
 import VueTheMask from 'vue-the-mask';
 
@@ -115,7 +102,6 @@ export default {
     LMap,
     LTileLayer,
     LMarker,
-    VueGoogleAutocomplete,
   },
   data: () => ({
     valid: true,
@@ -227,11 +213,12 @@ export default {
 
 <style scoped>
 .main {
-  width: 35%;
+  width: 65%;
   margin: 0 auto;
   margin-bottom: 2rem;
   border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.35);
+  margin-top: 1%;
 }
 .v-text-field {
   margin: 0 auto;

@@ -1,8 +1,15 @@
 <template>
   <div class="bg">
-    <h1> {{ welcomeMessage }}</h1>
     <MenuBar />
-    <CreateEvent />
+    <div class="content">
+    <v-btn rounded size="x-large" elevation="8" color="#3e1e68" class="newevent" @click = "showCreation = !showCreation">
+      <v-icon v-if="showCreation">mdi-arrow-up-thin</v-icon>
+    <v-icon v-else>mdi-arrow-down-thin</v-icon><h4 v-if="showCreation">Mégse</h4><h4 v-else>Új esemény létrehozása</h4></v-btn>
+    <CreateEvent v-if="showCreation"/>
+    <div v-for="event in events" :key="event.id" class="showEvents">
+      <ReadyEvent :event="event" />
+    </div>
+    </div>
     <FooterBar />
   </div>
 </template>
@@ -12,6 +19,7 @@ import axios from "axios";
 import MenuBar from "../components/MenuBar.vue";
 import CreateEvent from "../components/CreateEvent.vue";
 import FooterBar from "../components/FooterBar.vue";
+import ReadyEvent from "../components/ReadyEvent.vue";
 
 export default {
   name: "MainView",
@@ -19,27 +27,25 @@ export default {
     MenuBar,
     CreateEvent,
     FooterBar,
+    ReadyEvent,
   },
   data() {
     return{
-      welcomeMessage: '',
+      events : [],
+      showCreation: false,
     }
   },
   mounted() {
-    axios
-      .get("/api/users/welcome", {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-        },
-      })
+     axios
+      .get("/api/events")
       .then((response) => {
-        // eslint-disable-next-line no-unused-vars
-        const username = response.data.username;
-        this.welcomeMessage = `Welcome, ${username}`;
+        this.events = response.data;
       })
       .catch((error) => {
         console.error(error);
       });
+
+
   },
 };
 </script>
@@ -51,7 +57,16 @@ export default {
   background-attachment: fixed;
   background-size: cover;
 }
-h1{
+.content {
+  width: 80%;
+  margin: 0 auto;
+}
+.newevent{
   color:white;
+  margin-left: 5.5rem;
+  font-size: 1rem;
+}
+.showEvents{
+  margin-top: 4%;
 }
 </style>

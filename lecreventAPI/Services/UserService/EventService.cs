@@ -25,7 +25,16 @@ namespace lecreventAPI.Services.EventService
             _context2.event_details.Add(newEvent);
             await _context2.SaveChangesAsync();
             return await _context2.event_details.ToListAsync();
+        }
 
+        public async Task<List<Event>> GetAllEvents()
+        {
+            var today = DateTime.Today;
+            var events = await _context2.event_details
+                            .OrderBy(e => e.date)
+                            .ThenBy(e => e.time)
+                            .ToListAsync();
+            return events;
         }
     }
 }

@@ -22,5 +22,10 @@ namespace lecreventAPI.Controllers
                 return  BadRequest("Hiba");
             return Ok(result);
         }
+        [HttpGet]
+        public async Task<ActionResult<List<Event>>> GetAllEvents()
+        {
+            return await _eventService.GetAllEvents();
+        }
     }
 }

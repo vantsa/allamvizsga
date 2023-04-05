@@ -87,6 +87,9 @@ span {
   padding: 5px;
   font-weight: bold;
 }
+.text-h5{
+  color: black;
+}
 .theme--light.v-list {
   background-color: #3e1e68;
 }
@@ -96,5 +99,11 @@ span {
 }
 .theme--light.v-icon  {
   color: white;
+}
+.v-application .text-h5:hover{
+  cursor: pointer;
+}
+.v-img:hover{
+  cursor: pointer;
 }
 </style>
