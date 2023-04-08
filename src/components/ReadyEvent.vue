@@ -1,8 +1,8 @@
 <template>
-  <v-card class="main" v-if="proper = true">
+  <v-card class="main" v-if="proper">
     <div class="header">
       <div class="box">
-        <v-avatar color="yellow" size="58"
+        <v-avatar :color="getRandomColor()" size="58"
           ><span class="text-h5">{{
             user.firstName.charAt(0) + user.lastName.charAt(0)
           }}</span></v-avatar
@@ -19,15 +19,16 @@
     </div>
     <div class="content">
       <div class="box2">
-        <h4>Ennyi km-re tőled: {{ calcDistance() }}</h4>
+        <h4><v-icon color="black" class="mb-1">mdi-map-marker</v-icon> {{ calcDistance() }} kilóméterre</h4>
         <h4>Elérhető helyek száma : {{ event.spaces }}</h4>
-        <v-btn rounded color="#3e1e68" class="join">Csatlakozás</v-btn>
+        <v-btn v-if="!isTheCreator" rounded color="#0D8D13" class="join">Csatlakozás</v-btn>
+        <v-btn v-else rounded color="#A20805" class="join">Törlés<v-icon class="ic">mdi-delete</v-icon></v-btn>
       </div>
       <l-map
         ref="map"
         :zoom="zoom"
         :center="center"
-        style="z-index: 0; height: 300px; margin: 1rem"
+        style="z-index: 0; height: 350px; margin: 1.5rem"
       >
         <l-tile-layer :url="url"></l-tile-layer>
         <l-marker :lat-lng="markerLatLng"></l-marker>
@@ -58,7 +59,7 @@ export default {
   },
   data: () => ({
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    zoom: 14,
+    zoom: 15,
     center: [46.36, 25.802],
     markerLatLng: [46.3604, 25.802],
     mapVisible: true,
@@ -73,9 +74,30 @@ export default {
     userdistance: "",
     minUserAge: "",
     maxUserAge: "",
-    proper: ''
+    proper: true,
+    avatarColors: [
+      "#F44336",
+      "#E91E63",
+      "#9C27B0",
+      "#673AB7",
+      "#3F51B5",
+      "#2196F3",
+      "#03A9F4",
+      "#00BCD4",
+      "#009688",
+      "#4CAF50",
+      "#8BC34A",
+      "#FF9800",
+      "#FF5722",
+    ],
+    isTheCreator: false,
+    loggedUser: "",
+    usersetts: "",
   }),
   methods: {
+    getRandomColor(){
+          return this.avatarColors[Math.floor(Math.random() * this.avatarColors.length)]
+    },
     deg2rad(deg) {
       return deg * (Math.PI / 180);
     },
@@ -105,21 +127,30 @@ export default {
     this.markerLatLng[1] = this.event.longitude;
     this.center[0] = this.event.latitude;
     this.center[1] = this.event.longitude;
-    const response2 = await axios.get(`api/users/userprofile/${this.event.userId}`);
-    this.userdistance = response2.value;
-    this.minUserAge = response2.rangeStart;
-    this.maxUserAge = response2.rangeEnd;
     const token = localStorage.getItem("jwtToken");
     if (!token) {
       console.error("No token found");
       return;
     }
-    // eslint-disable-next-line no-unused-vars
-    const loggedUser = jwt_decode(token);
-    if(this.userdistance > this.calcDistance() || this.minUserAge > this.loggedUser.age || this.maxUserAge < this.loggedUser.age)
-    {
+    this.loggedUser = jwt_decode(token);
+    const response2 = await axios.get(
+      `api/users/userprofile/${this.loggedUser.id}`
+    );
+    this.usersetts = response2.data;
+    this.userdistance = this.usersetts.value;
+    this.minUserAge = this.usersetts.rangeStart;
+    this.maxUserAge = this.usersetts.rangeEnd;
+    if (
+      this.userdistance < this.calcDistance() ||
+      this.minUserAge > this.loggedUser.age ||
+      this.maxUserAge < this.loggedUser.age
+    ) {
       this.proper = false;
     }
+    if(this.loggedUser.id == this.event.userId)
+        {
+            this.isTheCreator = true;
+        } else this.isTheCreator = false;
   },
   created() {
     delete Icon.Default.prototype._getIconUrl;
@@ -168,20 +199,33 @@ p {
 .v-application p {
   margin-bottom: 0px;
 }
+.mid {
+  margin-left: 1.5rem;
+}
+.mid:nth-child(1){
+  margin-left: 2rem;
+}
 .time {
   text-align: right;
+  font-weight: bold;
   margin-right: 0.7rem;
 }
-
+.time:nth-child(2) {
+  margin-right: 1.5rem;
+}
 .content {
   display: flex;
   justify-content: space-between;
+  width: 95%;
+  margin: 0 auto;
 }
 .box2 {
-  margin-top: 1rem;
+  margin-top: 3rem;
+  width: 45%;
 }
 h4 {
   padding: 1rem 2rem;
+  font-size: 1.5rem;
 }
 .v-btn {
   margin: 2rem;
@@ -192,7 +236,14 @@ h4 {
 .box:last-child {
   flex-grow: 1;
 }
-.join{
+.join {
   color: white;
+  font-size: 1.5rem;
+  margin: 0 auto;
+  width: 100%;
+  margin-top: 30%;
+}
+.ic{
+  margin-left: 5%;
 }
 </style>

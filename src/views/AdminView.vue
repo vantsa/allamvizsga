@@ -2,8 +2,8 @@
   <div class="bg">
     <MenuBar />
     <div class="content">
-    <div v-for="event in events" :key="event.id" class="showEvents">
-      <ReadyEvent :event="event" />
+    <div v-for="user in users" :key="user.id">
+      <userList :user="user" />
     </div>
     </div>
     <FooterBar />
@@ -13,43 +13,32 @@
 <script>
 import MenuBar from "../components/MenuBar.vue";
 import FooterBar from "../components/FooterBar.vue";
-import ReadyEvent from "../components/ReadyEvent.vue";
+import userList from "../components/userList.vue";
 import axios from "axios";
-import jwt_decode from "jwt-decode";
 
 export default {
-  name: "ProfileView",
+  name: "AdminView",
   components: {
     MenuBar,
     FooterBar,
-    ReadyEvent,
+    userList,
   },
   data() {
     return {
-      events : [],
-      userId : "",
+      users: [],
     };
   },
-    mounted() {
-     axios
-      .get(`/api/events/user/${this.userId}`)
+  mounted() {
+    axios
+      .get("/api/users")
       .then((response) => {
-        this.events = response.data;
+        this.users = response.data;
       })
       .catch((error) => {
         console.error(error);
       });
   },
-  created() {
-    const token = localStorage.getItem("jwtToken");
-    if (!token) {
-      console.error("No token found");
-      return;
-    }
-    const user = jwt_decode(token);
-    this.userId = user.id;
-  },
-}
+};
 </script>
 
 <style scoped>
@@ -59,7 +48,7 @@ export default {
   background-attachment: fixed;
   background-size: cover;
 }
-.content{
+.content {
   width: 80%;
   margin: 0 auto;
 }

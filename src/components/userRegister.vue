@@ -81,6 +81,7 @@
         <v-checkbox
           v-model="acceptTos"
           label="Elfogadom a felhasználói feltételeket"
+          @click.native="redirectToTos"
         ></v-checkbox>
       </v-form>
     </v-card-text>
@@ -170,6 +171,7 @@ export default {
         );
       },
     ],
+    tosUrl: 'https://www.termsfeed.com/live/d602a85c-9aab-4733-80a8-22afdc9f9f0c'
   }),
   methods: {
     async submit() {
@@ -208,6 +210,9 @@ export default {
       }
       return age;
     },
+    redirectToTos() {
+      window.open(this.tosUrl, '_blank');
+    }
   },
 };
 </script>

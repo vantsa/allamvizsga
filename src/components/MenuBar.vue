@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-app-bar app color="#3E1E68" dark>
-      <v-img src="../assets/logo3.png" max-width="10%" v-on:click="goTo('/feed')"></v-img>
+      <v-img src="../assets/logo.png" max-width="10%" v-on:click="goTo('/feed')" class="logo"></v-img>
       <v-spacer></v-spacer>
       <div class="mobile-menu">
         <v-btn text to="/feed">Főoldal</v-btn>
@@ -18,6 +18,12 @@
               <v-icon>mdi-account-circle</v-icon>
             </v-list-item-icon>
             <v-list-item-title>Profil</v-list-item-title>
+          </v-list-item>
+          <v-list-item v-if="isAdmin" v-on:click="goTo('/admin')">
+          <v-list-item-icon>
+              <v-icon>mdi-shield-account</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Admin</v-list-item-title>
           </v-list-item>
           <v-list-item v-on:click="logOut">
             <v-list-item-icon>
@@ -41,6 +47,7 @@ export default {
     return {
       initials: "",
       username: "",
+      isAdmin: false,
     };
   },
   methods: {
@@ -61,6 +68,10 @@ export default {
     const user = jwt_decode(token);
     this.initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
     this.username = user.username;
+    if(this.username == "admin")
+    {
+      this.isAdmin = true;
+    }
   },
 };
 </script>
@@ -103,7 +114,13 @@ span {
 .v-application .text-h5:hover{
   cursor: pointer;
 }
-.v-img:hover{
-  cursor: pointer;
+.logo:hover{
+  cursor:pointer;
+}
+.logo{
+  margin-left: 3%;
+}
+.v-avatar{
+  margin-left: 5px;
 }
 </style>

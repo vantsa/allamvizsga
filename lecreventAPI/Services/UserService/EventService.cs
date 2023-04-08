@@ -36,5 +36,16 @@ namespace lecreventAPI.Services.EventService
                             .ToListAsync();
             return events;
         }
+
+        public async Task<List<Event>> GetAllUserEvents(int userId)
+        {
+            var today = DateTime.Today;
+            var events = await _context2.event_details
+                            .Where(e => e.userId == userId)
+                            .OrderBy(e => e.date)
+                            .ThenBy(e => e.time)
+                            .ToListAsync();
+            return events;
+        }
     }
 }

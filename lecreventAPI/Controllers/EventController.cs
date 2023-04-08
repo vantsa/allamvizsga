@@ -27,5 +27,11 @@ namespace lecreventAPI.Controllers
         {
             return await _eventService.GetAllEvents();
         }
+
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<List<Event>>> GetAllUserEvents(int userId)
+        {
+            return await _eventService.GetAllUserEvents(userId);
+        }
     }
 }
