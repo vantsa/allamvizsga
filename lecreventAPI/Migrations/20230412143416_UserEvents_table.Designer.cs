@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using lecreventAPI.Data;
 
@@ -10,9 +11,11 @@ using lecreventAPI.Data;
 namespace lecreventAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230412143416_UserEvents_table")]
+    partial class UserEventstable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -103,6 +106,10 @@ namespace lecreventAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
+
                     b.ToTable("user_events");
                 });
 
@@ -142,6 +149,25 @@ namespace lecreventAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("lecreventAPI.Models.UserEvent", b =>
+                {
+                    b.HasOne("lecreventAPI.Models.Event", "Event")
+                        .WithMany("UserEvents")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lecreventAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("lecreventAPI.Models.UserSettings", b =>
                 {
                     b.HasOne("lecreventAPI.Models.User", "User")
@@ -151,6 +177,11 @@ namespace lecreventAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("lecreventAPI.Models.Event", b =>
+                {
+                    b.Navigation("UserEvents");
                 });
 
             modelBuilder.Entity("lecreventAPI.Models.User", b =>

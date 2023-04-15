@@ -46,6 +46,9 @@ export default {
 </script>
 
 <style scoped>
+*{
+  font-family: 'Baloo-Regular';
+}
 .footer {
   background: #3e1e68;
   margin-top: 5rem;
@@ -100,5 +103,17 @@ h5
   margin-top:0.3rem;
   letter-spacing:2px;
   margin-bottom: 0.5rem;
+}
+@media only screen and (max-width: 1270px){
+a{
+  margin-left: -1%;
+}
+}
+@media only screen and (max-width: 960px){
+.container{
+  width: 75%;
+  margin-left: 8%;
+  align-items: baseline;
+}
 }
 </style>

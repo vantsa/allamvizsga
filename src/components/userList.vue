@@ -1,9 +1,15 @@
 <template>
-  <v-card class="mx-auto" max-width="300">
-    <h4> {{ user.username }}</h4>
-    <p> {{ user.firstName + " " + user.lastName }}
-    <p> {{ user.email }}</p>
-    <v-btn rounded @click="onDelete" class="delete-btn"><v-icon>mdi-delete</v-icon></v-btn>
+  <v-card class="mx-auto">
+    <div class="table-container">
+    <div class="table-row">
+      <div class="table-cell username"><h4>{{ user.username }}</h4></div>
+      <div class="table-cell name">{{ user.firstName }} {{ user.lastName }}</div>
+      <div class="table-cell email">{{ user.email }}</div>
+      <div class="table-cell">
+        <v-btn rounded @click="onDelete" class="delete-btn"><v-icon>mdi-delete</v-icon></v-btn>
+      </div>
+    </div>
+  </div>
         <v-alert
       fixed
       class="alert"
@@ -52,8 +58,8 @@ export default {
 </script>
 
 <style scoped>
-h4, p{
-    display: inline;
+*{
+  font-family: 'Baloo-Regular';
 }
 .alert {
   position: fixed;
@@ -62,5 +68,62 @@ h4, p{
   transform: translateX(-50%);
   z-index: 9999;
   width: 40%;
+}
+.table-container {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+}
+.mx-auto{
+  border-radius: 0px;
+}
+.table-row {
+  display: table-row;
+}
+
+.table-cell {
+  display: table-cell;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  font-size: 1.25rem;
+}
+.table-cell.username {
+  width: 20%; 
+}
+
+.table-cell.name {
+  width: 30%; 
+}
+
+.table-cell.email {
+  width: 40%;
+}
+.table-cell:last-child {
+  text-align: right;
+}
+
+.delete-btn {
+  padding: 0;
+  min-width: 0;
+}
+.mx-auto{
+  padding: 1rem;
+}
+@media only screen and (max-width: 800px){
+.table-cell{
+  font-size: 0.8rem;
+}
+}
+@media only screen and (max-width: 600px){
+.table-cell{
+  font-size: 0.7rem;
+}
+.v-btn:not(.v-btn--round).v-size--default{
+  height: 24px;
+  min-width: 30px;
+}
 }
 </style>

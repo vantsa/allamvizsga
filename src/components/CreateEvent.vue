@@ -212,6 +212,9 @@ export default {
 </script>
 
 <style scoped>
+*{
+  font-family: 'Baloo-Regular';
+}
 .main {
   width: 65%;
   margin: 0 auto;

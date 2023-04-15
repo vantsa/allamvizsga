@@ -80,6 +80,9 @@ export default {
 </script>
 
 <style scoped>
+*{
+  font-family: 'Baloo-Regular';
+}
 .welcometext{
   margin: 0 auto;
   background: rgba(86,41,144, 0.375);
@@ -97,7 +100,6 @@ export default {
   text-decoration: none;
   padding: 2rem;
   border-radius: 1.1rem;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-size: 1.8rem;
   
 }
@@ -125,7 +127,6 @@ export default {
 h1, h2{
   color:white;
   text-align: left;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 h1{
   font-size: 9.5rem;

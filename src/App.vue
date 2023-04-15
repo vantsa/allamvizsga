@@ -18,4 +18,9 @@ export default {
 </script>
 
 <style scoped>
+@font-face {
+  font-family: "Baloo-Regular";
+  src: local("Baloo-Regular"),
+   url(assets/fonts/Baloo-Regular.ttf) format("truetype");
+}
 </style>

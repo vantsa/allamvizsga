@@ -77,6 +77,9 @@ export default {
 </script>
 
 <style scoped>
+*{
+  font-family: 'Baloo-Regular';
+}
 .mobile-menu {
   margin: 0 2.5rem;
 }

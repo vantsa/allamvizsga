@@ -102,6 +102,9 @@ export default {
 </script>
 
 <style scoped>
+*{
+  font-family: 'Baloo-Regular';
+}
 .jobbalso {
   margin-left: 2em;
   size: 1em;

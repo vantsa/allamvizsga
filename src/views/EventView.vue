@@ -1,6 +1,7 @@
 <template>
   <div class="bg">
     <MenuBar />
+    <div v-if="loading"><LoadingScreen /></div>
     <div class="content">
     <div v-for="event in events" :key="event.id" class="showEvents">
       <ReadyEvent :event="event" />
@@ -16,6 +17,7 @@ import FooterBar from "../components/FooterBar.vue";
 import ReadyEvent from "../components/ReadyEvent.vue";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import LoadingScreen from "../components/LoadingScreen.vue";
 
 export default {
   name: "ProfileView",
@@ -23,11 +25,13 @@ export default {
     MenuBar,
     FooterBar,
     ReadyEvent,
+    LoadingScreen
   },
   data() {
     return {
       events : [],
       userId : "",
+      loading: true
     };
   },
     mounted() {
@@ -39,6 +43,9 @@ export default {
       .catch((error) => {
         console.error(error);
       });
+      setTimeout(() => {
+      this.loading = false;
+    }, 4000);
   },
   created() {
     const token = localStorage.getItem("jwtToken");
@@ -62,5 +69,6 @@ export default {
 .content{
   width: 80%;
   margin: 0 auto;
+  min-height: 500px;
 }
 </style>

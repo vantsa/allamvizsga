@@ -18,6 +18,7 @@ namespace lecreventAPI.Data
         public DbSet<User> user_profiles { get; set; }
         public DbSet<UserSettings> user_settings { get; set; }
         public DbSet<Event> event_details { get; set; }
+        public DbSet<UserEvent> user_events { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

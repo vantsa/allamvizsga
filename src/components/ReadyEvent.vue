@@ -19,10 +19,35 @@
     </div>
     <div class="content">
       <div class="box2">
-        <h4><v-icon color="black" class="mb-1">mdi-map-marker</v-icon> {{ calcDistance() }} kilóméterre</h4>
+        <h4>
+          <v-icon color="black" class="mb-1">mdi-map-marker</v-icon>
+          {{ calcDistance() }} kilóméterre
+        </h4>
         <h4>Elérhető helyek száma : {{ event.spaces }}</h4>
-        <v-btn v-if="!isTheCreator" rounded color="#0D8D13" class="join">Csatlakozás</v-btn>
-        <v-btn v-else rounded color="#A20805" class="join">Törlés<v-icon class="ic">mdi-delete</v-icon></v-btn>
+        <v-btn
+          v-if="alreadyJoined"
+          rounded
+          color="#A20805"
+          class="join"
+          @click="userDelete"
+          >Mégse<v-icon class="ic">mdi-alpha-x</v-icon></v-btn
+        >
+        <v-btn
+          v-if="!isTheCreator"
+          rounded
+          color="#0D8D13"
+          class="join"
+          @click="joinEvent"
+          >Csatlakozás</v-btn
+        >
+        <div v-else class="buttons">
+          <v-btn rounded color="#A20805" class="join" @click="onDelete"
+            >Törlés<v-icon class="ic">mdi-delete</v-icon></v-btn
+          >
+          <v-btn rounded color="#484948" class="join" @click="showJoined"
+            >Résztvevők listája<v-icon class="ic">mdi-view-list</v-icon></v-btn
+          >
+        </div>
       </div>
       <l-map
         ref="map"
@@ -34,6 +59,15 @@
         <l-marker :lat-lng="markerLatLng"></l-marker>
       </l-map>
     </div>
+    <v-alert
+      fixed
+      class="alert"
+      type="success"
+      v-if="successMsg"
+      dismissible
+      @input="successMsg = ''"
+      >{{ successMsg }}</v-alert
+    >
   </v-card>
 </template>
 
@@ -93,10 +127,15 @@ export default {
     isTheCreator: false,
     loggedUser: "",
     usersetts: "",
+    successMsg: "",
+    alreadyJoined: false,
+    response3Data: "",
   }),
   methods: {
-    getRandomColor(){
-          return this.avatarColors[Math.floor(Math.random() * this.avatarColors.length)]
+    getRandomColor() {
+      return this.avatarColors[
+        Math.floor(Math.random() * this.avatarColors.length)
+      ];
     },
     deg2rad(deg) {
       return deg * (Math.PI / 180);
@@ -118,6 +157,51 @@ export default {
     formatDate() {
       return this.event.date.substring(0, 10);
     },
+    async onDelete() {
+      try {
+        // eslint-disable-next-line no-unused-vars
+        const response = await axios.delete(
+          `api/events/remove/${this.event.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        window.location.reload();
+        this.successMsg = "Sikeres törlés!";
+      } catch (error) {
+        this.successMsg = "";
+      }
+    },
+    async joinEvent() {
+      try {
+        const data = {
+          UserId: this.loggedUser.id,
+          EventId: this.event.id,
+        };
+        // eslint-disable-next-line no-unused-vars
+        const response = await axios.post(`api/events/adduser`, data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        this.succesMsg = "Sikeresen csatlakoztál";
+      } catch (error) {
+        this.successMsg = "";
+      }
+    },
+    async showJoined() {
+      try {
+        // eslint-disable-next-line no-unused-vars
+        const response = await axios.get(`api/events/showlist`);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async userDelete() {
+
+    }
   },
   async mounted() {
     // eslint-disable-next-line no-unused-vars
@@ -141,16 +225,35 @@ export default {
     this.minUserAge = this.usersetts.rangeStart;
     this.maxUserAge = this.usersetts.rangeEnd;
     if (
-      this.userdistance < this.calcDistance() ||
+      (this.userdistance < this.calcDistance() &&
+        this.loggedUser.id != this.event.userId) ||
       this.minUserAge > this.loggedUser.age ||
       this.maxUserAge < this.loggedUser.age
     ) {
       this.proper = false;
     }
-    if(this.loggedUser.id == this.event.userId)
-        {
-            this.isTheCreator = true;
-        } else this.isTheCreator = false;
+    if (
+      this.loggedUser.id == this.event.userId ||
+      this.loggedUser.username == "admin"
+    ) {
+      this.isTheCreator = true;
+    } else this.isTheCreator = false;
+    if (this.event.spaces == 0) {
+      this.proper = false;
+      if(this.event.userId == this.loggedUser.id)
+      {
+        this.proper = true;
+      }
+    }
+    const response3 = await axios.get(
+      `api/events/isjoined/${this.loggedUser.id}`
+    );
+    this.response3Data = response3.data;
+    console.log(this.response3Data.UserId)
+    if(this.response3Data.UserId == this.loggedUser.id && this.response3Data.EventId == this.event.id){
+      this.alreadyJoined = true;
+    } else this.alreadyJoined = false;
+
   },
   created() {
     delete Icon.Default.prototype._getIconUrl;
@@ -164,7 +267,6 @@ export default {
         (position) => {
           this.latitude = position.coords.latitude;
           this.longitude = position.coords.longitude;
-          // Do something with latitude and longitude
         },
         (error) => {
           console.error(error);
@@ -178,6 +280,9 @@ export default {
 </script>
 
 <style scoped>
+* {
+  font-family: "Baloo-Regular";
+}
 .main {
   width: 85%;
   margin: 0 auto;
@@ -202,7 +307,7 @@ p {
 .mid {
   margin-left: 1.5rem;
 }
-.mid:nth-child(1){
+.mid:nth-child(1) {
   margin-left: 2rem;
 }
 .time {
@@ -221,7 +326,7 @@ p {
 }
 .box2 {
   margin-top: 3rem;
-  width: 45%;
+  width: 52%;
 }
 h4 {
   padding: 1rem 2rem;
@@ -241,9 +346,37 @@ h4 {
   font-size: 1.5rem;
   margin: 0 auto;
   width: 100%;
-  margin-top: 30%;
+  margin-bottom: 5%;
 }
-.ic{
+.join:nth-child(1) {
+  margin-top: 10%;
+}
+.ic {
   margin-left: 5%;
+}
+.main .is-full {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  color: white;
+  text-align: center;
+}
+.alert {
+  position: fixed;
+  top: 5%;
+  left: 80%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: 40%;
+}
+@media only screen and (max-width: 1175px) {
+  .join {
+    margin-bottom: 5%;
+  }
 }
 </style>

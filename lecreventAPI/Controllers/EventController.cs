@@ -33,5 +33,33 @@ namespace lecreventAPI.Controllers
         {
             return await _eventService.GetAllUserEvents(userId);
         }
+
+        [HttpDelete("remove/{id}")]
+        public async Task<ActionResult<List<Event>>> DeleteEvent(int id)
+        {
+            var result = await _eventService.DeleteEvent(id);
+            if(result is null)
+                return NotFound("Nem letezo esemeny");
+            return Ok(result);
+        }
+
+        [HttpPost("adduser")]
+        public async Task<ActionResult<List<User>>> RegUserEvent(UserEvent userEvent)
+        {
+            var result = await _eventService.RegUserEvent(userEvent);
+            if(result is null)
+                return  BadRequest("Hiba");
+            return Ok(result);
+        }
+        [HttpGet("isjoined/{UserId}")]
+        public async Task<ActionResult<UserEvent>> GetUserEvents(int UserId)
+        {
+            var result = await _eventService.GetUserEvents(UserId);
+            if (result is null)
+            {
+                return Ok("nem");
+            }
+            return Ok(result);
+        }
     }
 }

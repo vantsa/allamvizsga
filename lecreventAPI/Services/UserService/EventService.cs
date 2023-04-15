@@ -47,5 +47,32 @@ namespace lecreventAPI.Services.EventService
                             .ToListAsync();
             return events;
         }
+        public async Task<List<Event>?> DeleteEvent(int id)
+        {
+            var ev = await _context2.event_details.FindAsync(id);
+            if (ev == null)
+            {
+                return null;
+            }
+            _context2.event_details.Remove(ev);
+            await _context2.SaveChangesAsync();
+            return await _context2.event_details.ToListAsync();
+        }
+
+        public async Task<List<UserEvent>?> RegUserEvent(UserEvent userEvent)
+        {
+            _context2.user_events.Add(userEvent);
+            await _context2.SaveChangesAsync();
+            return await _context2.user_events.ToListAsync();
+        }
+        public async Task<UserEvent?> GetUserEvents(int UserId)
+        {
+            var userEvent = await _context2.user_events.SingleOrDefaultAsync(x => x.UserId == UserId);
+            if (userEvent == null)
+            {
+                return null;
+            }
+            return userEvent;
+        }
     }
 }
