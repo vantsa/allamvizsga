@@ -168,6 +168,7 @@ export default {
             },
           });
           this.successMsg = "Esemény létrehozva!";
+          this.$emit('reload-events');
         } catch (error) {
           this.successMsg = "";
         }

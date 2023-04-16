@@ -6,7 +6,7 @@
     <v-btn rounded size="x-large" elevation="8" color="#3e1e68" class="newevent" @click = "showCreation = !showCreation">
       <v-icon v-if="showCreation">mdi-arrow-up-thin</v-icon>
     <v-icon v-else>mdi-arrow-down-thin</v-icon><h4 v-if="showCreation">Mégse</h4><h4 v-else>Új esemény létrehozása</h4></v-btn>
-    <CreateEvent v-if="showCreation"/>
+    <CreateEvent v-if="showCreation" @reload-events="getEvent()"/>
     <div v-for="event in events" :key="event.id" class="showEvents">
       <ReadyEvent :event="event" @reload-events="getEvent()"/>
     </div>

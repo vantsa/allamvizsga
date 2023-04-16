@@ -125,7 +125,7 @@ export default {
     loggedUser: "",
     usersetts: "",
     successMsg: "",
-    alreadyJoined: false,
+    alreadyJoined: "",
     response3Data: "",
   }),
   methods: {
@@ -165,7 +165,7 @@ export default {
             },
           }
         );
-        this.$emit('reload-events');
+        this.$emit("reload-events");
         this.successMsg = "Sikeres törlés!";
       } catch (error) {
         this.successMsg = "";
@@ -173,6 +173,7 @@ export default {
     },
     async joinEvent() {
       try {
+        await this.getUserEventData();
         const data = {
           UserId: this.loggedUser.id,
           EventId: this.event.id,
@@ -184,13 +185,16 @@ export default {
           },
         });
         this.successMsg = "Sikeresen csatlakoztál";
-        this.$emit('reload-events');
+        this.alreadyJoined = !this.alreadyJoined;
+        this.$emit("reload-events");
+        this.$forceUpdate();
       } catch (error) {
         this.successMsg = "";
       }
     },
     async userDelete() {
-      try{
+      try {
+        await this.getUserEventData();
         // eslint-disable-next-line no-unused-vars
         const response = await axios.delete(
           `api/events/removejoineduser/${this.response3Data.id}`,
@@ -200,13 +204,34 @@ export default {
             },
           }
         );
+        this.alreadyJoined = !this.alreadyJoined;
         this.successMsg = "Sikeresen visszaléptél!";
-        this.$emit('reload-events');
-      }catch (error) {
+        this.$emit("reload-events");
+        this.$forceUpdate();
+      } catch (error) {
         console.log(error);
         this.successMsg = "";
       }
     },
+    async getUserEventData()
+    {
+      const response3 = await axios.get(
+      `api/events/isjoined/${this.loggedUser.id}`
+    );
+    if (response3.data == null) {
+      this.alreadyJoined = false;
+    } else {
+      this.response3Data = response3.data;
+      if (
+        this.response3Data.userId == this.loggedUser.id &&
+        this.response3Data.eventId == this.event.id
+      ) {
+        this.alreadyJoined = true;
+      } else {
+        this.alreadyJoined = false;
+      }
+    }
+    }
   },
   async mounted() {
     // eslint-disable-next-line no-unused-vars
@@ -249,22 +274,7 @@ export default {
         this.proper = true;
       }
     }
-    const response3 = await axios.get(
-      `api/events/isjoined/${this.loggedUser.id}`
-    );
-    if (response3.data == null) {
-      this.alreadyJoined = false;
-    } else {
-      this.response3Data = response3.data;
-      if (
-        this.response3Data.userId == this.loggedUser.id &&
-        this.response3Data.eventId == this.event.id
-      ) {
-        this.alreadyJoined = true;
-      } else {
-        this.alreadyJoined = false;
-      }
-    }
+    await this.getUserEventData();
   },
   created() {
     delete Icon.Default.prototype._getIconUrl;
@@ -343,7 +353,7 @@ h4 {
   padding: 1rem 2rem;
   font-size: 1.5rem;
 }
-.bottom{
+.bottom {
   margin-bottom: 5%;
 }
 .v-btn {
