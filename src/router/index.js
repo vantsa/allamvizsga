@@ -5,6 +5,7 @@ import MainView from '../views/MainView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import EventView from '../views/EventView.vue'
 import AdminView from '../views/AdminView.vue'
+import MapView from '../views/MapView.vue'
 
 Vue.use(VueRouter)
 
@@ -33,6 +34,11 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: AdminView,
+  },
+  {
+    path: '/map',
+    name: 'map',
+    component: MapView,
   }
 ]
 

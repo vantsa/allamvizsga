@@ -4,7 +4,7 @@
       <div class="box">
         <v-avatar :color="getRandomColor()" size="58"
           ><span class="text-h5">{{
-            user.firstName.charAt(0) + user.lastName.charAt(0)
+            user.firstName?.charAt(0) + user.lastName?.charAt(0)
           }}</span></v-avatar
         >
       </div>
@@ -23,17 +23,17 @@
           <v-icon color="black" class="mb-1">mdi-map-marker</v-icon>
           {{ calcDistance() }} kilóméterre
         </h4>
-        <h4>Elérhető helyek száma : {{ event.spaces }}</h4>
+        <h4 class="bottom">Elérhető helyek száma : {{ event.spaces }}</h4>
         <v-btn
           v-if="alreadyJoined"
           rounded
           color="#A20805"
           class="join"
           @click="userDelete"
-          >Mégse<v-icon class="ic">mdi-alpha-x</v-icon></v-btn
+          >Mégse</v-btn
         >
         <v-btn
-          v-if="!isTheCreator"
+          v-else-if="!isTheCreator"
           rounded
           color="#0D8D13"
           class="join"
@@ -44,19 +44,16 @@
           <v-btn rounded color="#A20805" class="join" @click="onDelete"
             >Törlés<v-icon class="ic">mdi-delete</v-icon></v-btn
           >
-          <v-btn rounded color="#484948" class="join" @click="showJoined"
-            >Résztvevők listája<v-icon class="ic">mdi-view-list</v-icon></v-btn
-          >
         </div>
       </div>
       <l-map
         ref="map"
         :zoom="zoom"
-        :center="center"
+        :center="[event.latitude, event.longitude]"
         style="z-index: 0; height: 350px; margin: 1.5rem"
       >
         <l-tile-layer :url="url"></l-tile-layer>
-        <l-marker :lat-lng="markerLatLng"></l-marker>
+        <l-marker :lat-lng="[event.latitude, event.longitude]"></l-marker>
       </l-map>
     </div>
     <v-alert
@@ -168,7 +165,7 @@ export default {
             },
           }
         );
-        window.location.reload();
+        this.$emit('reload-events');
         this.successMsg = "Sikeres törlés!";
       } catch (error) {
         this.successMsg = "";
@@ -186,22 +183,30 @@ export default {
             "Content-Type": "application/json",
           },
         });
-        this.succesMsg = "Sikeresen csatlakoztál";
+        this.successMsg = "Sikeresen csatlakoztál";
+        this.$emit('reload-events');
       } catch (error) {
         this.successMsg = "";
       }
     },
-    async showJoined() {
-      try {
+    async userDelete() {
+      try{
         // eslint-disable-next-line no-unused-vars
-        const response = await axios.get(`api/events/showlist`);
-      } catch (error) {
+        const response = await axios.delete(
+          `api/events/removejoineduser/${this.response3Data.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        this.successMsg = "Sikeresen visszaléptél!";
+        this.$emit('reload-events');
+      }catch (error) {
         console.log(error);
+        this.successMsg = "";
       }
     },
-    async userDelete() {
-
-    }
   },
   async mounted() {
     // eslint-disable-next-line no-unused-vars
@@ -240,20 +245,26 @@ export default {
     } else this.isTheCreator = false;
     if (this.event.spaces == 0) {
       this.proper = false;
-      if(this.event.userId == this.loggedUser.id)
-      {
+      if (this.event.userId == this.loggedUser.id) {
         this.proper = true;
       }
     }
     const response3 = await axios.get(
       `api/events/isjoined/${this.loggedUser.id}`
     );
-    this.response3Data = response3.data;
-    console.log(this.response3Data.UserId)
-    if(this.response3Data.UserId == this.loggedUser.id && this.response3Data.EventId == this.event.id){
-      this.alreadyJoined = true;
-    } else this.alreadyJoined = false;
-
+    if (response3.data == null) {
+      this.alreadyJoined = false;
+    } else {
+      this.response3Data = response3.data;
+      if (
+        this.response3Data.userId == this.loggedUser.id &&
+        this.response3Data.eventId == this.event.id
+      ) {
+        this.alreadyJoined = true;
+      } else {
+        this.alreadyJoined = false;
+      }
+    }
   },
   created() {
     delete Icon.Default.prototype._getIconUrl;
@@ -332,6 +343,9 @@ h4 {
   padding: 1rem 2rem;
   font-size: 1.5rem;
 }
+.bottom{
+  margin-bottom: 5%;
+}
 .v-btn {
   margin: 2rem;
 }
@@ -349,7 +363,7 @@ h4 {
   margin-bottom: 5%;
 }
 .join:nth-child(1) {
-  margin-top: 10%;
+  margin-top: 15%;
 }
 .ic {
   margin-left: 5%;

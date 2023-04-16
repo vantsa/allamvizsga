@@ -61,5 +61,14 @@ namespace lecreventAPI.Controllers
             }
             return Ok(result);
         }
+        [HttpDelete("removejoineduser/{id}")]
+        public async Task<ActionResult<List<Event>>> DeleteUserEvent(int id)
+        {
+            var result = await _eventService.DeleteUserEvent(id);
+            if(result is null)
+                return NotFound("Nem letezo felhasznalo");
+            return Ok(result);
+        }
+
     }
 }

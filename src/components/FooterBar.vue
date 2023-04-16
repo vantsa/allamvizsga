@@ -7,9 +7,10 @@
           míg a backend részét C# ASP.NET Core 7-ben készítettem. Az adatbázist MySql-ben hoztam létre.</p>
       </div>
       <div class="col-xs-6 col-md-3">
-        <h5>Linkek</h5>
+        <h5>Site map</h5>
         <ul>
         <li><a href="http://localhost:8080/#/feed">Főoldal</a></li>
+        <li><a href="http://localhost:8080/#/map">Térkép</a></li>
         <li><a href="http://localhost:8080/#/sajat-esemenyek">Saját események</a></li>
         <li><a href="http://localhost:8080/#/profile">Profil</a></li>
       </ul>

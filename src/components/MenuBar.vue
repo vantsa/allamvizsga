@@ -5,6 +5,7 @@
       <v-spacer></v-spacer>
       <div class="mobile-menu">
         <v-btn text to="/feed">Főoldal</v-btn>
+        <v-btn text to="/map">Térkép</v-btn>
         <v-btn text to="/events">Eseményeim</v-btn>
         <v-menu offset-y>
           <template v-slot:activator="{ on }">

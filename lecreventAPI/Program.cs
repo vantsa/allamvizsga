@@ -16,7 +16,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 {
-    build.WithOrigins("http://localhost:8080").AllowAnyMethod().AllowAnyHeader();
+    build.WithOrigins("http://localhost:8080", "http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
 }));
 
 var configuration = new ConfigurationBuilder()

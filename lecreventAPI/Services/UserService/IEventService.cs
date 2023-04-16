@@ -8,6 +8,7 @@ namespace lecreventAPI.Services.EventService
         Task<List<Event>?> DeleteEvent(int id);
         Task<List<UserEvent>?> RegUserEvent(UserEvent userEvent);
         Task<UserEvent?> GetUserEvents(int UserId);
+        Task<List<UserEvent>?> DeleteUserEvent(int Id);
 
     }
 }

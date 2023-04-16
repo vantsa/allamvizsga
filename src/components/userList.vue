@@ -6,7 +6,7 @@
       <div class="table-cell name">{{ user.firstName }} {{ user.lastName }}</div>
       <div class="table-cell email">{{ user.email }}</div>
       <div class="table-cell">
-        <v-btn rounded @click="onDelete" class="delete-btn"><v-icon>mdi-delete</v-icon></v-btn>
+        <v-btn rounded @click="onDelete" class="delete-btn" v-if="isUser"><v-icon>mdi-delete</v-icon></v-btn>
       </div>
     </div>
   </div>
@@ -37,6 +37,7 @@ export default {
   data() {
     return {
         successMsg : "",
+        isUser: true,
     };
   },
   methods: {
@@ -53,6 +54,12 @@ export default {
             this.successMsg = "";
         }
     }
+  },
+  async mounted() {
+    if(this.user.username == "admin")
+      {
+        this.isUser = false;
+      }
   }
 };
 </script>
