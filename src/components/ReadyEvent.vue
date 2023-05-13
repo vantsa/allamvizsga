@@ -41,16 +41,25 @@
           >Csatlakozás</v-btn
         >
         <div v-else class="buttons">
-          <v-btn rounded color="#A20805" class="join" @click="onDelete"
+          <v-btn rounded color="#A20805" class="join" @click="showDialog = true "
             >Törlés<v-icon class="ic">mdi-delete</v-icon></v-btn
           >
         </div>
+      <v-dialog v-model="showDialog" max-width="300">
+      <v-card>
+        <v-card-title class="headline">Biztosan törlöd ?</v-card-title>
+        <v-card-actions>
+          <v-btn color="error" text @click="onDelete">Igen</v-btn>
+          <v-btn text @click="showDialog = false">Nem</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
       </div>
       <l-map
         ref="map"
         :zoom="zoom"
         :center="[event.latitude, event.longitude]"
-        style="z-index: 0; height: 350px; margin: 1.5rem"
+        style="z-index: 0; height: 350px; margin: 1.5rem; border-radius: 40px"
       >
         <l-tile-layer :url="url"></l-tile-layer>
         <l-marker :lat-lng="[event.latitude, event.longitude]"></l-marker>
@@ -89,7 +98,7 @@ export default {
     },
   },
   data: () => ({
-    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    url: 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
     zoom: 15,
     center: [46.36, 25.802],
     markerLatLng: [46.3604, 25.802],
@@ -127,6 +136,8 @@ export default {
     successMsg: "",
     alreadyJoined: "",
     response3Data: "",
+    showDialog: false,
+    currentDate: new Date(),
   }),
   methods: {
     getRandomColor() {
@@ -154,6 +165,9 @@ export default {
     formatDate() {
       return this.event.date.substring(0, 10);
     },
+    formatCurrentDate(){
+      return this.currentDate.toLocaleString('sv-SE', { timeZone: 'UTC', hour12: false }).replace(' ', 'T');
+    },
     async onDelete() {
       try {
         // eslint-disable-next-line no-unused-vars
@@ -170,6 +184,7 @@ export default {
       } catch (error) {
         this.successMsg = "";
       }
+      this.showDialog = false;
     },
     async joinEvent() {
       try {
@@ -274,6 +289,12 @@ export default {
         this.proper = true;
       }
     }
+    console.log(this.event.date)
+    console.log(this.formatCurrentDate())
+    if(this.event.date < this.formatCurrentDate() && this.loggedUser.username != "admin")
+    {
+      this.proper = false;
+    }
     await this.getUserEventData();
   },
   created() {
@@ -303,13 +324,15 @@ export default {
 <style scoped>
 * {
   font-family: "Baloo-Regular";
+  color: lightgrey;
+  letter-spacing: 2px;
 }
 .main {
   width: 85%;
   margin: 0 auto;
   margin-bottom: 2rem;
   border-radius: 5px;
-  background-color: rgba(255, 255, 255, 0.35);
+  background: rgba(73, 39, 118, 0.375);
 }
 .header {
   display: flex;
@@ -397,6 +420,9 @@ h4 {
   transform: translateX(-50%);
   z-index: 9999;
   width: 40%;
+}
+.headline{
+  text-align: center;
 }
 @media only screen and (max-width: 1175px) {
   .join {

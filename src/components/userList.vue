@@ -6,8 +6,17 @@
       <div class="table-cell name">{{ user.firstName }} {{ user.lastName }}</div>
       <div class="table-cell email">{{ user.email }}</div>
       <div class="table-cell">
-        <v-btn rounded @click="onDelete" class="delete-btn" v-if="isUser"><v-icon>mdi-delete</v-icon></v-btn>
+        <v-btn rounded @click="showDialog = true" class="delete-btn" v-if="isUser"><v-icon>mdi-delete</v-icon></v-btn>
       </div>
+       <v-dialog v-model="showDialog" max-width="500">
+      <v-card>
+        <v-card-title class="headline">Biztosan törölni szeretnéd ?</v-card-title>
+        <v-card-actions>
+          <v-btn color="error" text @click="onDelete">Igen</v-btn>
+          <v-btn text @click="showDialog = false">Nem</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </div>
   </div>
         <v-alert
@@ -38,6 +47,7 @@ export default {
     return {
         successMsg : "",
         isUser: true,
+        showDialog: false,
     };
   },
   methods: {
@@ -53,6 +63,7 @@ export default {
         }catch (error) {
             this.successMsg = "";
         }
+         this.showDialog = false;
     }
   },
   async mounted() {

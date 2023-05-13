@@ -7,12 +7,23 @@
         ref="map"
         :zoom="zoom"
         :center="center"
-        style="z-index: 0; height: 750px; margin: 1.5rem"
+        style="z-index: 0; height: 750px; margin: 1.5rem; border-radius: 40px;"
       >
         <l-tile-layer :url="url"></l-tile-layer>
-        <l-marker v-for="event in events" :key="event.id" :lat-lng="[event.latitude, event.longitude]">
-        <l-popup>{{ event.description }} <br> {{ event.date.substring(0, 10) }} <br> {{ event.time }} </l-popup>
+        <l-marker
+          v-for="event in events"
+          :key="event.id"
+          :lat-lng="[event.latitude, event.longitude]"
+        >
+          <l-popup
+            >{{ event.description }} <br />
+            {{ event.date.substring(0, 10) }} <br />
+            {{ event.time }}
+          </l-popup>
         </l-marker>
+        <template v-if="currentPosition">
+          <l-circle :lat-lng="currentPosition" :radius="value" />
+        </template>
       </l-map>
     </div>
     <FooterBar />
@@ -24,9 +35,11 @@ import MenuBar from "../components/MenuBar.vue";
 import FooterBar from "../components/FooterBar.vue";
 import axios from "axios";
 import LoadingScreen from "../components/LoadingScreen.vue";
-import { LMap, LTileLayer, LMarker, LPopup} from "vue2-leaflet";
+import { LMap, LTileLayer, LMarker, LPopup, LCircle } from "vue2-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
+import jwt_decode from "jwt-decode";
+
 
 export default {
   name: "ProfileView",
@@ -37,16 +50,20 @@ export default {
     LMap,
     LTileLayer,
     LMarker,
-    LPopup 
+    LPopup,
+    LCircle,
   },
   data() {
     return {
-      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      zoom: 9,
+      url: 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
+      zoom: 10,
       center: [46.36, 25.802],
       mapVisible: true,
       events: [],
-      loading: true
+      loading: true,
+      userId: "",
+      value: 1000,
+      currentPosition: null,
     };
   },
   methods: {
@@ -63,6 +80,12 @@ export default {
   },
   async mounted() {
     await this.getEvent();
+    try {
+      const response = await axios.get(`api/users/userprofile/${this.userId}`);
+      this.value = response.data.value * 1000;
+    } catch (error) {
+      console.error(error);
+    }
     setTimeout(() => {
       this.loading = false;
     }, 1000);
@@ -74,6 +97,28 @@ export default {
       iconUrl: require("leaflet/dist/images/marker-icon.png"),
       shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
     });
+    const token = localStorage.getItem("jwtToken");
+    if (!token) {
+      console.error("No token found");
+      this.$router.push("/");
+    }
+    const user = jwt_decode(token);
+    this.userId = user.id;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.currentPosition = [
+            position.coords.latitude,
+            position.coords.longitude,
+          ];
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
   },
 };
 </script>

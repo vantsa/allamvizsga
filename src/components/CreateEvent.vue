@@ -56,7 +56,7 @@
           :zoom="zoom"
           :center="center"
           @click="onMapClick"
-          style="z-index: 0; height: 300px"
+          style="z-index: 0; height: 300px; border-radius: 40px;"
         >
           <l-tile-layer :url="url"></l-tile-layer>
           <l-marker :lat-lng="markerLatLng"></l-marker>
@@ -137,7 +137,7 @@ export default {
       (v) =>
         /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/.test(v) || "Helytelen formátum",
     ],
-    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    url: 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
     zoom: 17,
     center: [46.36, 25.802],
     markerLatLng: [46.3604, 25.802],
