@@ -315,7 +315,7 @@ export default {
         }
       );
     } else {
-      console.error("Geolocation is not supported by this browser.");
+      console.error("Helylekérés nem támogatott a böngészőben.");
     }
   },
 };

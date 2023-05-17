@@ -125,7 +125,8 @@ namespace lecreventAPI.Services.UserService
                     new Claim("email", checkUser.email.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(5),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
