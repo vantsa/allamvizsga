@@ -47,7 +47,7 @@
         </div>
       <v-dialog v-model="showDialog" max-width="300">
       <v-card>
-        <v-card-title class="headline">Biztosan törlöd ?</v-card-title>
+        <v-card-title class="headline" style="color: red">Biztosan törlöd ?</v-card-title>
         <v-card-actions>
           <v-btn color="error" text @click="onDelete">Igen</v-btn>
           <v-btn text @click="showDialog = false">Nem</v-btn>
